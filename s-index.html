@@ -23,10 +23,10 @@
                     },
                     colors: {
                         brand: {
-                            red: '#9B1B1B',      /* โทนสีแดงจากโลโก้ */
+                            red: '#9B1B1B',      
                             darkRed: '#7A1515',
                             accentRed: '#B22222',
-                            cream: '#F4E3C5',    /* โทนสีตัวหนังสือจากโลโก้ */
+                            cream: '#F4E3C5',    
                             light: '#FFFDF9',
                             slateBg: '#F8FAFC'
                         }
@@ -51,14 +51,11 @@
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
         }
-        
-        /* Custom Scrollbar for sleek UI */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
         ::-webkit-scrollbar-thumb:hover { background: #9B1B1B; }
 
-        /* Smooth Screen transitions */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
@@ -66,8 +63,6 @@
         .animate-fadeIn {
             animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-
-        /* Active button state */
         .btn-active:active {
             transform: scale(0.96);
         }
@@ -77,14 +72,12 @@
 
     <!-- ================== LOGIN SCREEN ================== -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-brand-darkRed via-brand-red to-red-700 relative overflow-hidden px-4">
-        <!-- Brand Decor Circle 1 -->
         <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-brand-accentRed opacity-20 blur-3xl"></div>
-        <!-- Brand Decor Circle 2 -->
         <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-black opacity-35 blur-3xl"></div>
         
         <div class="bg-white/95 backdrop-blur-md p-8 sm:p-12 rounded-3xl shadow-2xl w-full max-w-md z-10 text-center transform transition-all border border-white/20">
             <div class="w-28 h-28 sm:w-32 sm:h-32 mx-auto mb-6 flex items-center justify-center rounded-full border-4 border-brand-cream shadow-xl overflow-hidden bg-brand-red transition-transform hover:scale-105 duration-300">
-                <img src="SSP-logo.jpg" alt="ไส้กรอกภาเจริญ โลโก้" class="w-full h-full object-cover" onerror="this.onerror=null; this.outerHTML='<i class=\'fa-solid fa-hotdog text-5xl text-brand-cream\'></i>';">
+                <img src="SSP-logo.jpg" alt="โลโก้" class="w-full h-full object-cover" onerror="this.onerror=null; this.outerHTML='<i class=\'fa-solid fa-hotdog text-5xl text-brand-cream\'></i>';">
             </div>
             <h1 class="text-3xl font-extrabold text-brand-red mb-1 tracking-tight">ไส้กรอกภาเจริญ</h1>
             <p class="text-sm font-medium text-gray-500 mb-8">ระบบจัดการคลังและจุดจำหน่ายหน้าร้าน</p>
@@ -108,8 +101,8 @@
                         <input type="password" id="password" class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-brand-red text-base transition-shadow duration-200 bg-gray-50/50" placeholder="กรอกรหัสผ่านเพื่อเข้าใช้งาน" required>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-brand-red to-brand-accentRed text-white py-3.5 rounded-2xl font-bold hover:brightness-110 active:scale-[0.98] transition duration-150 shadow-lg shadow-brand-red/20 text-base btn-active">
-                    เข้าสู่ระบบ
+                <button type="submit" id="btn-login" disabled class="w-full bg-gradient-to-r from-brand-red to-brand-accentRed text-white py-3.5 rounded-2xl font-bold hover:brightness-110 active:scale-[0.98] transition duration-150 shadow-lg shadow-brand-red/20 text-base btn-active disabled:opacity-70 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังเชื่อมต่อข้อมูล...
                 </button>
             </form>
             <div class="mt-6 text-xs text-gray-400">สงวนสิทธิ์การเข้าถึงระบบเฉพาะพนักงานและผู้บริหารเท่านั้น</div>
@@ -118,38 +111,33 @@
 
     <!-- ================== MAIN APP SCREEN ================== -->
     <div id="app-screen" class="hide h-screen flex relative overflow-hidden bg-brand-slateBg">
-        
-        <!-- Mobile Sidebar Overlay (Sits underneath but above main) -->
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 z-40 hidden transition-opacity duration-300"></div>
 
-        <!-- Sidebar Navigation (Responsive Desktop & Tablet & Phone) -->
         <aside id="main-sidebar" class="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#9B1B1B] via-[#7A1515] to-[#5C0F0F] text-white flex flex-col shadow-sidebar z-50 transform -translate-x-full lg:translate-x-0 lg:relative transition-transform duration-300 ease-in-out shrink-0">
-            <!-- Sidebar Header with Brand -->
             <div class="p-6 flex items-center gap-4 border-b border-brand-red/30">
                 <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-brand-cream bg-white shrink-0 flex items-center justify-center shadow-md">
-                    <img src="SSP-logo.jpg" alt="ไส้กรอกภาเจริญ โลโก้" class="w-full h-full object-cover" onerror="this.onerror=null; this.outerHTML='<i class=\'fa-solid fa-hotdog text-brand-red text-xl\'></i>';">
+                    <img src="SSP-logo.jpg" alt="โลโก้" class="w-full h-full object-cover" onerror="this.onerror=null; this.outerHTML='<i class=\'fa-solid fa-hotdog text-brand-red text-xl\'></i>';">
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-brand-cream tracking-wide truncate">ไส้กรอกภาเจริญ</h2>
-                    <span class="text-xs text-red-200/70 font-light uppercase tracking-wider">Stock & POS System</span>
+                    <span class="text-xs text-red-200/70 font-light uppercase tracking-wider">Stock System</span>
                 </div>
-                <!-- Close Button (Mobile only) -->
                 <button onclick="toggleSidebar()" class="lg:hidden ml-auto text-red-200 hover:text-white p-2 hover:bg-white/10 rounded-xl transition duration-150">
                     <i class="fa-solid fa-chevron-left text-lg"></i>
                 </button>
             </div>
 
-            <!-- Navigation Links -->
             <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
                 <a href="#" onclick="showPage('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-4 px-4 py-3.5 rounded-2xl bg-brand-darkRed text-white transition-all font-medium">
-                    <i class="fa-solid fa-chart-pie w-6 text-center text-lg"></i> <span>ภาพรวมระบบ</span>
-                </a>
-                <a href="#" onclick="showPage('pos')" id="nav-pos" class="nav-item flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-200 hover:bg-white/10 hover:text-white transition-all font-medium">
-                    <i class="fa-solid fa-cash-register w-6 text-center text-lg"></i> <span>หน้าร้าน (POS)</span>
+                    <i class="fa-solid fa-chart-pie w-6 text-center text-lg"></i> <span>ภาพรวมคลังสินค้า</span>
                 </a>
                 <a href="#" onclick="showPage('inventory')" id="nav-inventory" class="nav-item flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-200 hover:bg-white/10 hover:text-white transition-all font-medium">
                     <i class="fa-solid fa-boxes-stacked w-6 text-center text-lg"></i> <span>จัดการคลังสินค้า</span>
                 </a>
+                <a href="#" onclick="showPage('pos')" id="nav-pos" class="nav-item flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-200 hover:bg-white/10 hover:text-white transition-all font-medium">
+                    <i class="fa-solid fa-dolly w-6 text-center text-lg"></i> <span>เบิก/จ่าย สินค้า</span>
+                </a>
+                
                 <a href="#" onclick="showPage('transactions')" id="nav-transactions" class="nav-item flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-200 hover:bg-white/10 hover:text-white transition-all font-medium hide">
                     <i class="fa-solid fa-clipboard-list w-6 text-center text-lg"></i> <span>ประวัติรายการ</span>
                 </a>
@@ -158,7 +146,6 @@
                 </a>
             </nav>
 
-            <!-- Sidebar Footer User Profile + Logout -->
             <div class="p-4 border-t border-brand-red/30 bg-black/15">
                 <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 bg-red-950/80 hover:bg-red-950 text-red-100 rounded-2xl transition duration-150 font-semibold text-sm shadow-inner hover:text-white btn-active">
                     <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
@@ -166,29 +153,23 @@
             </div>
         </aside>
 
-        <!-- Main Content View Area (Fixed App-like Structure) -->
         <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-brand-slateBg">
-            
-            <!-- Sleek Top Header -->
             <header class="glass-effect shadow-premium px-6 py-4 flex justify-between items-center z-30 shrink-0 border-b border-slate-150/60">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSidebar()" class="lg:hidden text-slate-700 hover:text-brand-red p-2.5 rounded-2xl bg-slate-100 hover:bg-red-50 transition duration-150">
                         <i class="fa-solid fa-bars-staggered text-lg"></i>
                     </button>
-                    <h2 id="page-title" class="text-xl font-bold text-slate-850 tracking-tight">ภาพรวมระบบ (Dashboard)</h2>
+                    <h2 id="page-title" class="text-xl font-bold text-slate-850 tracking-tight">ภาพรวมคลังสินค้า</h2>
                 </div>
                 
                 <div class="flex items-center gap-3">
-                    <!-- Sync Button -->
-                    <button onclick="forceSyncToSheet()" class="p-2.5 text-slate-500 hover:text-blue-600 transition duration-200 rounded-2xl hover:bg-blue-50/70 btn-active" title="ซิงค์สต๊อกไปยัง Google Sheet">
-                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                    <button onclick="forceSyncToSheet()" class="p-2.5 text-slate-500 hover:text-blue-600 transition duration-200 rounded-2xl hover:bg-blue-50/70 btn-active" title="อัปเดตข้อมูลจาก Google Sheet">
+                        <i class="fa-solid fa-rotate text-xl"></i>
                     </button>
-                    <!-- Notification Button -->
                     <button onclick="checkLowStock(true)" class="relative p-2.5 text-slate-500 hover:text-brand-red transition duration-200 rounded-2xl hover:bg-red-50/70 btn-active">
                         <i class="fa-solid fa-bell text-xl"></i>
                         <span id="alert-badge" class="hide absolute top-1.5 right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
                     </button>
-                    <!-- User Profile Slot -->
                     <div class="flex items-center gap-3 border-l pl-4 border-slate-200">
                         <div class="w-9 h-9 bg-brand-cream text-brand-red rounded-xl flex items-center justify-center font-bold shadow-inner" id="header-user-icon">A</div>
                         <span class="font-semibold hidden md:block text-sm text-slate-700" id="header-user-name">Admin</span>
@@ -196,139 +177,146 @@
                 </div>
             </header>
 
-            <!-- Display Area for pages (Independently scrollable per page) -->
             <div class="flex-1 overflow-hidden relative">
                 
                 <!-- ================== PAGE: DASHBOARD ================== -->
-                <div id="page-dashboard" class="page-content h-full overflow-y-auto p-4 md:p-6 space-y-6 animate-fadeIn">
+                <div id="page-dashboard" class="page-content h-full flex flex-col p-4 md:p-6 animate-fadeIn">
                     
-                    <!-- Premium Date Filter Row -->
-                    <div class="bg-white p-5 rounded-3xl shadow-card border border-slate-100/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <!-- Filter Workspace for Dashboard -->
+                    <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white p-5 rounded-3xl shadow-card border border-slate-100 mb-5 shrink-0">
                         <div>
-                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-calendar-alt text-brand-red"></i> คัดกรองช่วงเวลาข้อมูล</h3>
-                            <p class="text-xs text-slate-400 mt-1">ตั้งค่าช่วงเวลาเพื่อประมวลยอดขายและต้นทุนในหน้านี้</p>
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-line text-brand-red"></i> สรุปความเคลื่อนไหวคลัง</h3>
+                            <p class="text-xs text-slate-400 mt-1">วิเคราะห์ยอดการนำเข้าและเบิกจ่ายตามช่วงเวลา</p>
                         </div>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                            <select id="dashboard-date-filter" onchange="applyDashboardFilter()" class="w-full sm:w-auto border border-slate-200 px-4 py-2.5 rounded-2xl focus:ring-2 focus:ring-brand-red outline-none text-sm bg-slate-50 font-medium text-slate-700 cursor-pointer">
-                                <option value="all">ข้อมูลทั้งหมด (All Time)</option>
-                                <option value="7days">ย้อนหลัง 7 วัน</option>
-                                <option value="1month">ย้อนหลัง 1 เดือน</option>
-                                <option value="1year">ย้อนหลัง 1 ปี</option>
-                                <option value="custom">กำหนดช่วงเวลาเอง...</option>
-                            </select>
-                            <div id="custom-date-inputs" class="hide flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto bg-slate-50 p-2 sm:p-0 rounded-2xl sm:bg-transparent border border-slate-200 sm:border-0">
-                                <input type="date" id="date-start" onchange="applyDashboardFilter()" class="w-full sm:w-auto border border-slate-200 px-3 py-2 rounded-xl outline-none text-sm font-medium">
-                                <span class="text-slate-500 text-xs hidden sm:inline font-bold">ถึง</span>
-                                <input type="date" id="date-end" onchange="applyDashboardFilter()" class="w-full sm:w-auto border border-slate-200 px-3 py-2 rounded-xl outline-none text-sm font-medium">
+                        
+                        <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 w-full xl:w-auto">
+                            <!-- ตัวกรองช่วงเวลา -->
+                            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 w-full sm:w-auto shadow-sm">
+                                <i class="fa-solid fa-calendar-day text-slate-400 text-sm mr-2.5"></i>
+                                <select id="dashboard-filter" onchange="onDashboardFilterChange()" class="bg-transparent text-sm font-semibold text-slate-700 outline-none w-full cursor-pointer focus:ring-0">
+                                    <option value="1day">วันนี้ / ย้อนหลัง 1 วัน</option>
+                                    <option value="1week">ย้อนหลัง 1 สัปดาห์</option>
+                                    <option value="1month">ย้อนหลัง 1 เดือน</option>
+                                    <option value="1year">ย้อนหลัง 1 ปี</option>
+                                    <option value="all">ดูข้อมูลทั้งหมด (All Time)</option>
+                                    <option value="custom">ระบุช่วงเวลาเอง...</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Statistics Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-                        <!-- Stat Card: Total Stock -->
-                        <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                            <div class="absolute right-0 top-0 w-20 h-20 bg-blue-50/50 rounded-bl-full -z-10 group-hover:bg-blue-50 transition-colors"></div>
-                            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-sm border border-blue-100">
-                                <i class="fa-solid fa-warehouse"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">คลังสินค้าทั้งหมด</p>
-                                <h3 class="text-3xl font-extrabold text-slate-800 leading-tight" id="stat-total-stock">0 <span class="text-xs font-normal text-slate-500">ชิ้น</span></h3>
-                            </div>
-                        </div>
-                        <!-- Stat Card: Total Cost -->
-                        <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                            <div class="absolute right-0 top-0 w-20 h-20 bg-orange-50/50 rounded-bl-full -z-10 group-hover:bg-orange-50 transition-colors"></div>
-                            <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-sm border border-orange-100">
-                                <i class="fa-solid fa-receipt"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">ต้นทุนรวมสะสม</p>
-                                <h3 class="text-2xl font-extrabold text-slate-800 leading-tight truncate max-w-[150px]" id="stat-total-cost">฿0</h3>
-                            </div>
-                        </div>
-                        <!-- Stat Card: Total Revenue -->
-                        <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                            <div class="absolute right-0 top-0 w-20 h-20 bg-emerald-50/50 rounded-bl-full -z-10 group-hover:bg-emerald-50 transition-colors"></div>
-                            <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-sm border border-emerald-100">
-                                <i class="fa-solid fa-chart-line-up"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">ยอดขายสะสม</p>
-                                <h3 class="text-2xl font-extrabold text-slate-800 leading-tight truncate max-w-[150px]" id="stat-total-revenue">฿0</h3>
-                            </div>
-                        </div>
-                        <!-- Stat Card: Net Profit -->
-                        <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                            <div class="absolute right-0 top-0 w-20 h-20 bg-rose-50/50 rounded-bl-full -z-10 group-hover:bg-rose-50 transition-colors"></div>
-                            <div class="w-14 h-14 bg-rose-50 text-brand-red rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-sm border border-rose-100">
-                                <i class="fa-solid fa-sack-dollar"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">กำไรสุทธิ</p>
-                                <h3 class="text-2xl font-extrabold text-slate-800 leading-tight truncate max-w-[150px]" id="stat-net-profit">฿0</h3>
+                            
+                            <!-- เลือกช่วงเวลาอิสระ (แสดงเมื่อเลือก กำหนดเอง) -->
+                            <div id="dashboard-custom-dates" class="hide flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                                <input type="date" id="dash-start-date" onchange="calculateDashboardStats()" class="text-sm bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 font-medium text-slate-700 outline-none focus:border-brand-red shadow-sm w-full sm:w-auto cursor-pointer">
+                                <span class="text-slate-400 text-sm hidden sm:block">-</span>
+                                <input type="date" id="dash-end-date" onchange="calculateDashboardStats()" class="text-sm bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 font-medium text-slate-700 outline-none focus:border-brand-red shadow-sm w-full sm:w-auto cursor-pointer">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Dashboard Alerts Panel (Low Stock Warnings) -->
-                    <div id="dashboard-alerts" class="hide bg-rose-50/70 border border-rose-100 rounded-3xl p-5 shadow-sm animate-pulse">
-                        <h3 class="text-brand-red font-bold mb-3 flex items-center gap-2 text-sm sm:text-base">
-                            <i class="fa-solid fa-triangle-exclamation text-lg"></i> สินค้าใกล้หมดสต๊อก (เหลือน้อยกว่า 5 ชิ้น)
-                        </h3>
-                        <div id="low-stock-list" class="flex flex-wrap gap-2.5">
-                            <!-- Injected Low Stock badges -->
-                        </div>
-                    </div>
+                    <div class="flex-1 overflow-y-auto pr-1 pb-4 space-y-5">
+                        
+                        <!-- Statistics Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <!-- Stat Card: Total Stock (Current) -->
+                            <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+                                <div class="absolute right-0 top-0 w-20 h-20 bg-blue-50/50 rounded-bl-full -z-10 group-hover:bg-blue-50 transition-colors"></div>
+                                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm border border-blue-100">
+                                    <i class="fa-solid fa-boxes-stacked"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">คงเหลือ ณ ปัจจุบัน</p>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 leading-tight" id="stat-total-stock">0 <span class="text-sm font-normal text-slate-500">ถุง</span></h3>
+                                </div>
+                            </div>
 
-                    <!-- Chart Workspace Section -->
-                    <div class="bg-white p-5 md:p-6 rounded-3xl shadow-card border border-slate-100/80">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-chart-column text-lg"></i></div>
-                            <div>
-                                <h3 class="font-bold text-slate-800">สรุปยอดขาย และ ต้นทุนสะสม</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">แผนภูมิแท่งเปรียบเทียบความสัมพันธ์ของสัดส่วนรายได้กับต้นทุนสะสม</p>
+                            <!-- Stat Card: Total In (Filtered) -->
+                            <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+                                <div class="absolute right-0 top-0 w-20 h-20 bg-emerald-50/50 rounded-bl-full -z-10 group-hover:bg-emerald-50 transition-colors"></div>
+                                <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm border border-emerald-100">
+                                    <i class="fa-solid fa-arrow-down-to-line"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">ยอดรับเข้า <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 ml-1">ช่วงที่เลือก</span></p>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 leading-tight" id="stat-total-in">0 <span class="text-sm font-normal text-slate-500">ถุง</span></h3>
+                                </div>
+                            </div>
+
+                            <!-- Stat Card: Total Out (Filtered) -->
+                            <div class="bg-white p-6 rounded-3xl shadow-card border border-slate-100/80 flex items-center gap-4 relative overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+                                <div class="absolute right-0 top-0 w-20 h-20 bg-orange-50/50 rounded-bl-full -z-10 group-hover:bg-orange-50 transition-colors"></div>
+                                <div class="w-16 h-16 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm border border-orange-100">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 mb-1 font-semibold tracking-wide uppercase">ยอดจ่ายออก <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 ml-1">ช่วงที่เลือก</span></p>
+                                    <h3 class="text-3xl font-extrabold text-slate-800 leading-tight" id="stat-total-out">0 <span class="text-sm font-normal text-slate-500">ถุง</span></h3>
+                                </div>
                             </div>
                         </div>
-                        <div class="w-full h-72 sm:h-96 relative">
-                            <canvas id="dashboardChart"></canvas>
+
+                        <!-- Dashboard Alerts Panel (Low Stock Warnings) -->
+                        <div id="dashboard-alerts" class="hide bg-rose-50/70 border border-rose-100 rounded-3xl p-5 shadow-sm animate-pulse">
+                            <h3 class="text-brand-red font-bold mb-3 flex items-center gap-2 text-sm sm:text-base">
+                                <i class="fa-solid fa-triangle-exclamation text-lg"></i> สินค้าใกล้หมดสต๊อก (เหลือน้อยกว่า 5 ถุง)
+                            </h3>
+                            <div id="low-stock-list" class="flex flex-wrap gap-2.5">
+                                <!-- Injected Low Stock badges -->
+                            </div>
                         </div>
+
+                        <!-- Dashboard Mini Transactions (Filtered) -->
+                        <div class="bg-white rounded-3xl shadow-card border border-slate-150/60 overflow-hidden flex flex-col">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                <h4 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-list text-slate-400 mr-2"></i>รายการเคลื่อนไหว (ตามช่วงเวลาที่กรอง)</h4>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 text-[11px] border-b border-slate-200 uppercase tracking-wider font-bold">
+                                            <th class="p-3 pl-6">วันที่-เวลา</th>
+                                            <th class="p-3">ผู้ทำรายการ</th>
+                                            <th class="p-3">ประเภท</th>
+                                            <th class="p-3">สินค้า</th>
+                                            <th class="p-3 text-center pr-6">ปริมาณ (ถุง)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-tx-body" class="divide-y divide-slate-100">
+                                        <!-- Injected rows -->
+                                    </tbody>
+                                </table>
+                                <div id="dashboard-tx-empty" class="hide py-8 text-center text-slate-400 text-sm font-medium">
+                                    ไม่พบรายการเคลื่อนไหวในช่วงเวลานี้
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
                 <!-- ================== PAGE: INVENTORY ================== -->
                 <div id="page-inventory" class="page-content hide h-full flex flex-col p-4 md:p-6 animate-fadeIn">
-                    
-                    <!-- Search and Action Workspace -->
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-3xl shadow-card border border-slate-100/80 mb-5 shrink-0">
                         <div class="relative w-full sm:w-80">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
                             <input type="text" id="search-inventory" onkeyup="renderInventory()" placeholder="ค้นหาสินค้าจากสต๊อก..." class="w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium">
                         </div>
                         <button onclick="openModal('modal-add-product')" class="bg-brand-red text-white px-6 py-3 rounded-2xl hover:bg-brand-darkRed shadow-md shadow-brand-red/10 flex items-center gap-2 w-full sm:w-auto justify-center transition btn-active font-semibold">
-                            <i class="fa-solid fa-plus-circle"></i> เพิ่มประเภทสินค้าใหม่
+                            <i class="fa-solid fa-plus-circle"></i> เพิ่มประเภทสินค้า
                         </button>
                     </div>
 
-                    <!-- Table Workspace (Scrollable table with Sticky header) -->
                     <div class="flex-1 bg-white rounded-3xl shadow-card border border-slate-150/60 overflow-hidden flex flex-col">
                         <div class="flex-1 overflow-y-auto" style="height: calc(100vh - 290px);">
-                            <table class="w-full text-left border-collapse min-w-[850px]">
+                            <table class="w-full text-left border-collapse min-w-[700px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-600 text-xs border-b border-slate-200 uppercase tracking-wider font-bold sticky top-0 z-20 backdrop-blur-md">
-                                        <th class="p-4 whitespace-nowrap pl-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">รหัส</th>
+                                        <th class="p-4 whitespace-nowrap pl-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90 w-32">รหัส</th>
                                         <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ชื่อสินค้า / ไส้กรอก</th>
-                                        <th class="p-4 whitespace-nowrap text-right shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ต้นทุนซื้อต่อหน่วย (฿)</th>
-                                        <th class="p-4 whitespace-nowrap text-right shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ราคาตั้งจำหน่าย (฿)</th>
-                                        <th class="p-4 whitespace-nowrap text-center shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">สต๊อกคงเหลือ (ชิ้น)</th>
-                                        <th class="p-4 whitespace-nowrap text-center shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">จัดการด่วน</th>
-                                        <th class="p-4 whitespace-nowrap text-center pr-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ควบคุม</th>
+                                        <th class="p-4 whitespace-nowrap text-center shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90 w-40">คงเหลือ (ถุง)</th>
+                                        <th class="p-4 whitespace-nowrap text-center shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90 w-56">จัดการสต๊อก</th>
+                                        <th class="p-4 whitespace-nowrap text-center pr-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90 w-32">ควบคุม</th>
                                     </tr>
                                 </thead>
-                                <tbody id="inventory-table-body" class="divide-y divide-slate-100">
-                                    <!-- Dynamic Rows -->
-                                </tbody>
+                                <tbody id="inventory-table-body" class="divide-y divide-slate-100"></tbody>
                             </table>
                             <div id="empty-inventory" class="hide py-16 text-center text-slate-400">
                                 <i class="fa-solid fa-box-open text-6xl mb-4 text-slate-200"></i>
@@ -338,102 +326,80 @@
                     </div>
                 </div>
 
-                <!-- ================== PAGE: POS (หน้าร้านจุดขาย) ================== -->
+                <!-- ================== PAGE: POS (เบิก/จ่าย) ================== -->
                 <div id="page-pos" class="page-content hide h-full flex flex-col lg:flex-row gap-5 p-4 md:p-6 overflow-hidden animate-fadeIn">
-                    
-                    <!-- Products Listing Area (Left Block) -->
                     <div class="flex-1 flex flex-col min-h-0 h-full">
-                        <!-- Search Box inside POS -->
                         <div class="mb-4 bg-white p-3.5 rounded-3xl shadow-card border border-slate-100/80 shrink-0">
                             <div class="relative">
                                 <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                                <input type="text" id="search-pos" onkeyup="renderPOSProducts()" placeholder="พิมพ์ค้นหาสินค้าเพื่อออกบิลขาย..." class="w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base">
+                                <input type="text" id="search-pos" onkeyup="renderPOSProducts()" placeholder="พิมพ์ค้นหาสินค้าเพื่อเบิก/จ่าย..." class="w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base">
                             </div>
                         </div>
-                        <!-- Product Grid Container (Scrolls independently) -->
                         <div class="flex-1 overflow-y-auto pr-1 pb-4">
-                            <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                                <!-- Dynamic Grid Items -->
-                            </div>
+                            <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
                         </div>
                     </div>
                     
-                    <!-- Fixed Cart / Order Summary Panel (Right Block) -->
                     <div class="w-full lg:w-[400px] bg-white rounded-3xl shadow-xl border border-slate-200/60 flex flex-col h-[400px] lg:h-full shrink-0 overflow-hidden z-20">
                         <div class="p-5 border-b border-slate-100 bg-slate-50/80 flex justify-between items-center shrink-0">
                             <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2.5">
-                                <i class="fa-solid fa-shopping-basket text-brand-red text-xl"></i> ตะกร้าจัดซื้อสินค้า
+                                <i class="fa-solid fa-dolly text-brand-red text-xl"></i> ตะกร้าเบิก/จ่าย
                             </h3>
                             <span class="text-xs bg-slate-200/80 px-2.5 py-1.5 rounded-xl font-bold text-slate-600 shadow-sm" id="pos-cart-badge">0 รายการ</span>
                         </div>
                         
-                        <!-- Scrollable Cart Content Area -->
-                        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/30" id="pos-cart-items">
-                            <!-- Injected Cart items -->
-                        </div>
+                        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/30" id="pos-cart-items"></div>
                         
-                        <!-- Static Bill Summary and Action (Never scrolls away) -->
                         <div class="p-5 border-t border-slate-250 bg-slate-50 space-y-4 shrink-0 shadow-[0_-8px_24px_rgba(0,0,0,0.03)] rounded-b-3xl">
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-center text-slate-500 text-sm font-semibold">
-                                    <span>จำนวนรวมสินค้าในบิล:</span>
-                                    <span id="pos-total-qty" class="font-bold text-slate-850 text-base">0 ชิ้น</span>
-                                </div>
-                                <div class="flex justify-between items-center pt-1">
-                                    <span class="font-bold text-slate-800 text-base">ยอดเงินเรียกเก็บสุทธิ:</span>
-                                    <span id="pos-total-price" class="font-black text-brand-red text-3xl">฿0</span>
-                                </div>
+                            <div class="flex justify-between items-center pt-1">
+                                <span class="font-bold text-slate-800 text-base">จำนวนที่ต้องการรวม:</span>
+                                <span id="pos-total-qty" class="font-black text-brand-red text-3xl">0 ถุง</span>
                             </div>
-                            <button onclick="checkoutPOS()" id="btn-checkout" disabled class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-emerald-700 hover:shadow-lg transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none shadow-md shadow-emerald-600/10 btn-active">
-                                <i class="fa-solid fa-cart-circle-check mr-1.5"></i> ออกใบเสร็จ / บันทึกขาย
+                            <button onclick="checkoutPOS()" id="btn-checkout" disabled class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-700 hover:shadow-lg transition-all disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none shadow-md shadow-blue-600/10 btn-active">
+                                <i class="fa-solid fa-check-circle mr-1.5"></i> ยืนยันการเบิก/จ่าย
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ================== PAGE: TRANSACTIONS ================== -->
+                <!-- ================== PAGE: TRANSACTIONS (RAW LOG) ================== -->
                 <div id="page-transactions" class="page-content hide h-full flex flex-col p-4 md:p-6 animate-fadeIn">
                     
-                    <!-- Search and Action header -->
-                    <div class="flex justify-between items-center flex-wrap gap-4 bg-white p-5 rounded-3xl shadow-card border border-slate-100 mb-5 shrink-0">
+                    <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-white p-5 rounded-3xl shadow-card border border-slate-100 mb-5 shrink-0">
                         <div>
-                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-history text-brand-red"></i> ประวัติความเคลื่อนไหวคลัง</h3>
-                            <p class="text-xs text-slate-400 mt-1">เก็บบันทึกประวัติการเปลี่ยนแปลงสต๊อก การขาย การนำเข้า และแก้ไขสินค้าในระบบ</p>
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-list-check text-brand-red"></i> บันทึกประวัติแบบเต็ม (Log)</h3>
+                            <p class="text-xs text-slate-400 mt-1">แสดงประวัติทั้งหมดที่เกิดขึ้นในระบบ โดยไม่ใช้การกรอง</p>
                         </div>
-                        <button onclick="clearTransactions()" class="text-sm font-bold bg-rose-50 text-brand-red px-5 py-3 rounded-2xl hover:bg-rose-100 transition duration-150 flex items-center gap-2 btn-active">
+                        
+                        <button onclick="clearTransactions()" class="text-sm font-bold bg-rose-50 text-brand-red px-5 py-2.5 rounded-2xl hover:bg-rose-100 transition duration-150 flex items-center gap-2 btn-active w-full sm:w-auto justify-center border border-rose-200/50 shadow-sm">
                             <i class="fa-solid fa-trash-can"></i> ล้างประวัติทั้งหมด
                         </button>
                     </div>
 
-                    <!-- Scrollable Table Container -->
                     <div class="flex-1 bg-white rounded-3xl shadow-card border border-slate-150/60 overflow-hidden flex flex-col">
                         <div class="flex-1 overflow-y-auto" style="height: calc(100vh - 290px);">
-                            <table class="w-full text-left border-collapse min-w-[800px]">
+                            <table class="w-full text-left border-collapse min-w-[700px]">
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-600 text-xs border-b border-slate-200 uppercase tracking-wider font-bold sticky top-0 z-20 backdrop-blur-md">
                                         <th class="p-4 whitespace-nowrap pl-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">วันที่-เวลา</th>
                                         <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ผู้รับผิดชอบ</th>
                                         <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ประเภทกระบวนการ</th>
                                         <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">สินค้าที่จัดการ</th>
-                                        <th class="p-4 whitespace-nowrap text-center shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ปริมาณ (ชิ้น)</th>
-                                        <th class="p-4 whitespace-nowrap text-right pr-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">มูลค่าทางบัญชี (฿)</th>
+                                        <th class="p-4 whitespace-nowrap text-center pr-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ปริมาณ (ถุง)</th>
                                     </tr>
                                 </thead>
-                                <tbody id="transaction-table-body" class="divide-y divide-slate-100">
-                                    <!-- Dynamic rows -->
-                                </tbody>
+                                <tbody id="transaction-table-body" class="divide-y divide-slate-100"></tbody>
                             </table>
                             <div id="empty-transactions" class="hide py-16 text-center text-slate-400">
                                 <i class="fa-solid fa-receipt text-6xl mb-4 text-slate-200"></i>
-                                <p class="font-bold text-lg">ยังไม่พบรายการเดินสต๊อกในระบบ</p>
+                                <p class="font-bold text-lg mt-2">ไม่พบรายการประวัติ</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ================== PAGE: USERS (จัดการผู้ใช้งาน) ================== -->
+                <!-- ================== PAGE: USERS ================== -->
                 <div id="page-users" class="page-content hide h-full flex flex-col p-4 md:p-6 animate-fadeIn">
-                    
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-3xl shadow-card border border-slate-100 mb-5 shrink-0">
                         <div>
                             <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-user-group text-brand-red"></i> จัดการสิทธิ์ผู้ดูแลและพนักงาน</h3>
@@ -450,14 +416,12 @@
                                 <thead>
                                     <tr class="bg-slate-50 text-slate-600 text-xs border-b border-slate-200 uppercase tracking-wider font-bold sticky top-0 z-20 backdrop-blur-md">
                                         <th class="p-4 whitespace-nowrap pl-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">ชื่อผู้ใช้งาน (Username)</th>
-                                        <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">รหัสผ่านสำหรับลงชื่อเข้าใช้ (Password)</th>
+                                        <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">รหัสผ่านสำหรับเข้าใช้ (Password)</th>
                                         <th class="p-4 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">สิทธิ์การควบคุมระดับ (Role)</th>
                                         <th class="p-4 whitespace-nowrap text-center pr-6 shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] bg-slate-50/90">จัดสรร</th>
                                     </tr>
                                 </thead>
-                                <tbody id="users-table-body" class="divide-y divide-slate-100">
-                                    <!-- Dynamic rows -->
-                                </tbody>
+                                <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
@@ -467,8 +431,7 @@
         </main>
     </div>
 
-    <!-- ================== MODALS WORKSPACE ================== -->
-    
+    <!-- ================== MODALS ================== -->
     <!-- Modal: Add/Edit Product -->
     <div id="modal-add-product" class="hide fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-95 opacity-0 duration-200">
@@ -478,24 +441,17 @@
             </div>
             <form id="product-form" onsubmit="saveProduct(event)" class="p-6 space-y-4">
                 <input type="hidden" id="prod-id">
+                
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">ชื่อสินค้า / ไส้กรอกชนิดพิเศษ <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">ชื่อสินค้า / ไส้กรอก <span class="text-rose-500">*</span></label>
                     <input type="text" id="prod-name" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">ราคาต้นทุน (บาท) <span class="text-rose-500">*</span></label>
-                        <input type="number" id="prod-cost" min="0" step="0.01" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">ราคาขายจำหน่าย (บาท) <span class="text-rose-500">*</span></label>
-                        <input type="number" id="prod-price" min="0" step="0.01" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all">
-                    </div>
-                </div>
+                
                 <div id="initial-stock-group">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">จำนวนจัดเตรียมเริ่มต้น (ชิ้น)</label>
-                    <input type="number" id="prod-stock" min="0" value="0" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">จำนวนตั้งต้นเริ่มแรก (ถุง)</label>
+                    <input type="number" id="prod-stock" min="0" value="0" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all text-blue-700">
                 </div>
+                
                 <div class="pt-4 flex gap-3">
                     <button type="button" onclick="closeModal('modal-add-product')" class="flex-1 bg-slate-100 text-slate-700 py-3 rounded-2xl font-bold hover:bg-slate-200 transition btn-active">ยกเลิก</button>
                     <button type="submit" class="flex-1 bg-brand-red text-white py-3 rounded-2xl font-bold hover:bg-brand-darkRed transition shadow-lg shadow-brand-red/10 btn-active">บันทึกข้อมูล</button>
@@ -517,21 +473,16 @@
                 
                 <div class="text-center mb-2 bg-slate-50/70 p-4 rounded-2xl border border-slate-100">
                     <h4 class="text-xl font-bold text-slate-800 mb-1.5" id="stock-product-name">ชื่อสินค้า</h4>
-                    <p class="text-sm text-slate-500 font-medium">คลังคงเหลือปัจจุบัน: <span id="stock-current-val" class="font-black text-brand-red text-base">0</span> ชิ้น</p>
+                    <p class="text-sm text-slate-500 font-medium">คลังคงเหลือ: <span id="stock-current-val" class="font-black text-brand-red text-base">0</span> ถุง</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2" id="stock-qty-label">ระบุจำนวนที่ต้องการ</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2 text-center" id="stock-qty-label">ระบุจำนวน (ถุง)</label>
                     <div class="flex items-center shadow-sm rounded-2xl overflow-hidden border border-slate-200">
                         <button type="button" onclick="adjustQty(-1)" class="bg-slate-50 w-16 py-3.5 hover:bg-slate-150 active:bg-slate-200 transition text-slate-600 font-bold"><i class="fa-solid fa-minus"></i></button>
                         <input type="number" id="stock-qty" min="1" value="1" required class="w-full text-center py-3 border-x border-slate-200 focus:outline-none focus:ring-0 font-bold text-xl bg-white text-slate-800">
                         <button type="button" onclick="adjustQty(1)" class="bg-slate-50 w-16 py-3.5 hover:bg-slate-150 active:bg-slate-200 transition text-slate-600 font-bold"><i class="fa-solid fa-plus"></i></button>
                     </div>
-                </div>
-
-                <div class="bg-blue-50/50 p-4 rounded-2xl text-sm flex justify-between items-center border border-blue-100/50 mt-2">
-                    <span class="text-blue-800 font-semibold">มูลค่ารวมสะสม:</span>
-                    <span class="font-black text-2xl text-blue-950" id="stock-total-price">฿0</span>
                 </div>
 
                 <div class="pt-4">
@@ -554,14 +505,14 @@
                     <input type="text" id="new-username" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">กำหนดรหัสผ่านเข้าใช้ (Password) <span class="text-rose-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">กำหนดรหัสผ่าน (Password) <span class="text-rose-500">*</span></label>
                     <input type="text" id="new-password" required class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-medium text-base transition-all">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">สิทธิ์การทำงานในระบบ (Role)</label>
                     <select id="new-role" class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-red outline-none bg-slate-50 font-semibold text-slate-700 text-base cursor-pointer">
-                        <option value="staff">พนักงานทั่วไปและพนักงานหน้าร้าน (Staff)</option>
-                        <option value="admin">ผู้ดูแลระบบคลังและนโยบายบัญชี (Admin)</option>
+                        <option value="staff">พนักงานทั่วไป (Staff)</option>
+                        <option value="admin">ผู้ดูแลระบบ (Admin)</option>
                     </select>
                 </div>
                 <div class="pt-5">
@@ -572,210 +523,165 @@
     </div>
 
 
-    <!-- ================== JAVASCRIPT LOGIC WORKSPACE ================== -->
+    <!-- ================== JAVASCRIPT ================== -->
     <script>
         // --- State Management ---
         let products = JSON.parse(localStorage.getItem('pha_products')) || [];
         let transactions = JSON.parse(localStorage.getItem('pha_transactions')) || [];
-        
-        // --- User Core Database ---
-        let users = JSON.parse(localStorage.getItem('pha_users')) || [{username: 'admin', password: '1234', role: 'admin'}];
+        let users = JSON.parse(localStorage.getItem('pha_users')) || [];
         let currentUser = JSON.parse(localStorage.getItem('pha_current_user')) || null;
 
         const LOW_STOCK_THRESHOLD = 5;
-
-        // --- POS Variables ---
         let cart = [];
-
-        // --- Controller States ---
-        let dashChart = null;
         let isSidebarOpen = false;
 
-        // --- Web App URL for Google Sheets ---
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwqzjatx3HRyjpJzo3Oj9363Ew7J8OAMYbaFMXIHoGhT2L21oKSp4o_FxZ1Pn--YgV67A/exec"; 
+        // อัปเดตลิงก์ใหม่ตามที่แจ้งมาแล้ว
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyofNwilnf-TIn9Q2Hcrr_J1cQSqVD-DCuqGX-AeKu0xM_O5pSkjHli0Rpc0bCvG3bFRA/exec"; 
 
-        // --- Responsive Mobile Sidebar Controls ---
+        window.addEventListener('DOMContentLoaded', async () => {
+            await fetchInitialData(); 
+            if (currentUser) {
+                const validUser = users.find(u => String(u.username) === String(currentUser.username));
+                if (validUser) {
+                    document.getElementById('login-screen').classList.add('hide');
+                    document.getElementById('app-screen').classList.remove('hide');
+                    initApp();
+                } else {
+                    handleLogout(true); 
+                }
+            }
+        });
+
+        async function fetchInitialData() {
+            const btnLogin = document.getElementById('btn-login');
+            if (!GOOGLE_SHEET_URL) {
+                ensureAdminExists();
+                btnLogin.innerHTML = 'เข้าสู่ระบบ'; btnLogin.disabled = false;
+                return;
+            }
+            try {
+                const res = await fetch(`${GOOGLE_SHEET_URL}?action=get_all_data`);
+                const data = await res.json();
+                
+                if (data.status === "success") {
+                    if (data.users) users = data.users;
+                    if (data.products) products = data.products;
+                    if (data.transactions) transactions = data.transactions;
+                }
+                
+                ensureAdminExists();
+                saveData();
+                
+                btnLogin.innerHTML = 'เข้าสู่ระบบ';
+                btnLogin.disabled = false;
+            } catch (err) {
+                console.error("Fetch Data Error:", err);
+                ensureAdminExists();
+                btnLogin.innerHTML = 'เข้าสู่ระบบ (ออฟไลน์)';
+                btnLogin.disabled = false;
+            }
+        }
+
+        function ensureAdminExists() {
+            if (!users || users.length === 0 || !users.some(u => String(u.username) === 'admin')) {
+                users.push({username: 'admin', password: '1234', role: 'admin'});
+            }
+        }
+
+        async function syncToGoogleSheet(action, payload) {
+            if (!GOOGLE_SHEET_URL) return; 
+            try {
+                await fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, data: payload })
+                });
+            } catch (error) {
+                console.error("Sync Error:", error);
+            }
+        }
+
+        async function forceSyncToSheet() {
+            if (!GOOGLE_SHEET_URL) return;
+            Swal.fire({
+                title: 'กำลังอัปเดตข้อมูลล่าสุด...',
+                allowEscapeKey: false, allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            await fetchInitialData();
+            
+            const activeNav = document.querySelector('.nav-item.bg-brand-darkRed');
+            if(activeNav) showPage(activeNav.id.replace('nav-', ''));
+            
+            Swal.fire({ icon: 'success', title: 'ข้อมูลล่าสุดตรงกันแล้ว!', timer: 1500, showConfirmButton: false });
+        }
+
+
+        // --- UI & Actions ---
         function toggleSidebar() {
             const sidebar = document.getElementById('main-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
             isSidebarOpen = !isSidebarOpen;
             
             if (isSidebarOpen) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+                sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.add('opacity-100'), 50);
             } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.remove('opacity-100');
+                sidebar.classList.add('-translate-x-full'); overlay.classList.remove('opacity-100');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
             }
         }
 
         function closeSidebarMobile() {
-            // ปิดเมนูด่วนเมื่ออยู่บนหน้าจอขนาดเล็กกว่า 1024px (Tablet portrait / Phone)
-            if (window.innerWidth < 1024 && isSidebarOpen) {
-                toggleSidebar();
-            }
+            if (window.innerWidth < 1024 && isSidebarOpen) toggleSidebar();
         }
-
-        // --- Sync To Google Sheets Handler ---
-        async function syncToGoogleSheet(action, payload) {
-            if (!GOOGLE_SHEET_URL) return; 
-            try {
-                await fetch(GOOGLE_SHEET_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: action, data: payload })
-                });
-                console.log(`✅ ส่งคำสั่ง ${action} ไปยัง Google Sheet เรียบร้อยแล้ว`);
-            } catch (error) {
-                console.error("❌ การจัดส่งล้มเหลว:", error);
-            }
-        }
-
-        // --- Force Manual Sync to Sheets ---
-        async function forceSyncToSheet() {
-            if (!GOOGLE_SHEET_URL) {
-                Swal.fire({ 
-                    icon: 'error', 
-                    title: 'ไม่พบตำแหน่งปลายทาง', 
-                    text: 'กรุณาทำการตั้งค่าลิงก์ในตัวแปร GOOGLE_SHEET_URL ของระบบเพื่อเชื่อมต่อก่อนทำรายการ',
-                    confirmButtonColor: '#9B1B1B'
-                });
-                return;
-            }
-            
-            Swal.fire({
-                title: 'กำลังซิงค์ฐานข้อมูล...',
-                text: 'กรุณาอย่าเพิ่งปิดหน้านี้ ระบบกำลังสื่อสารกับฐานข้อมูลออนไลน์ของคุณ',
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
-            });
-
-            await syncToGoogleSheet('sync_all', { products: products });
-            
-            setTimeout(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'เชื่อมต่อและอัปโหลดข้อมูลสำเร็จ!',
-                    text: 'ข้อมูลประเภทสินค้า คลังสะสม และยอดคงเหลือ ลิงก์ไปยัง Google Sheet เรียบร้อยแล้ว',
-                    timer: 2200,
-                    showConfirmButton: false
-                });
-            }, 1000);
-        }
-
-        // --- Currency and Date String formatters ---
-        const formatMoney = (amount) => {
-            return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
-        };
 
         const formatDate = (dateStr) => {
             const d = new Date(dateStr);
             return d.toLocaleString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         };
 
-        // --- Session Verification ---
-        window.addEventListener('DOMContentLoaded', () => {
-            if (currentUser) {
-                document.getElementById('login-screen').classList.add('hide');
-                document.getElementById('app-screen').classList.remove('hide');
-                initApp();
-            }
-        });
-
-        // --- Sign In Logic ---
         function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
 
-            const foundUser = users.find(u => u.username === user && u.password === pass);
+            const foundUser = users.find(u => String(u.username) === user && String(u.password) === pass);
 
             if (foundUser) {
-                currentUser = { username: foundUser.username, role: foundUser.role };
+                currentUser = { username: String(foundUser.username), role: String(foundUser.role) };
                 localStorage.setItem('pha_current_user', JSON.stringify(currentUser));
                 
                 document.getElementById('login-screen').classList.add('hide');
                 document.getElementById('app-screen').classList.remove('hide');
                 initApp();
             } else {
+                Swal.fire({ icon: 'error', title: 'ข้อมูลผิดพลาด', text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', confirmButtonColor: '#9B1B1B' });
+            }
+        }
+
+        function handleLogout(force = false) {
+            if (force) { execLogout(); } 
+            else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'ข้อมูลเข้าสู่ระบบผิดพลาด',
-                    text: 'กรุณาตรวจสอบบัญชีผู้ใช้งาน และ รหัสผ่านใหม่อีกครั้งเพื่อความถูกต้อง',
-                    confirmButtonColor: '#9B1B1B'
-                });
+                    title: 'ยืนยันต้องการออกจากระบบ?',
+                    icon: 'question', showCancelButton: true, confirmButtonColor: '#9B1B1B', cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'ออกจากระบบ', cancelButtonText: 'ยกเลิก', reverseButtons: true
+                }).then((r) => { if (r.isConfirmed) execLogout(); });
             }
         }
-
-        // --- Logout Action ---
-        function handleLogout() {
-            Swal.fire({
-                title: 'ยืนยันต้องการออกจากระบบ?',
-                text: 'คุณจำเป็นต้องใส่ชื่อผู้ใช้ใหม่หากต้องการทำรายการรอบถัดไป',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#9B1B1B',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'ออกจากระบบ',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    currentUser = null;
-                    localStorage.removeItem('pha_current_user');
-
-                    document.getElementById('login-screen').classList.remove('hide');
-                    document.getElementById('app-screen').classList.add('hide');
-                    document.getElementById('login-form').reset();
-                    if(isSidebarOpen) toggleSidebar(); 
-                }
-            });
+        
+        function execLogout() {
+            currentUser = null;
+            localStorage.removeItem('pha_current_user');
+            document.getElementById('login-screen').classList.remove('hide');
+            document.getElementById('app-screen').classList.add('hide');
+            document.getElementById('login-form').reset();
+            if(isSidebarOpen) toggleSidebar(); 
         }
 
-        // --- Main Switch Screen Navigation ---
-        function showPage(pageId) {
-            if (pageId === 'transactions' && currentUser.role !== 'admin') {
-                return;
-            }
-
-            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hide'));
-            
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-brand-darkRed', 'text-white');
-                el.classList.add('text-red-200');
-            });
-            
-            document.getElementById(`page-${pageId}`).classList.remove('hide');
-            
-            const activeNav = document.getElementById(`nav-${pageId}`);
-            activeNav.classList.remove('text-red-200');
-            activeNav.classList.add('bg-brand-darkRed', 'text-white');
-
-            const titles = {
-                'dashboard': 'ภาพรวมระบบ (Dashboard)',
-                'pos': 'หน้าร้านจุดขาย (POS)',
-                'inventory': 'จัดการคลังสินค้า (Inventory)',
-                'transactions': 'ประวัติรายการ (Transactions)',
-                'users': 'จัดการผู้ใช้งานระบบ (User Management)'
-            };
-            document.getElementById('page-title').innerText = titles[pageId];
-
-            if(pageId === 'dashboard') {
-                applyDashboardFilter();
-            }
-            if(pageId === 'pos') renderPOSProducts();
-            if(pageId === 'inventory') renderInventory();
-            if(pageId === 'transactions') renderTransactions();
-            if(pageId === 'users') renderUsers();
-
-            closeSidebarMobile();
-        }
-
-        // --- App Boot Init ---
         function initApp() {
             document.getElementById('header-user-name').innerText = currentUser.username;
             document.getElementById('header-user-icon').innerText = currentUser.username.charAt(0).toUpperCase();
@@ -783,27 +689,42 @@
             const navUsers = document.getElementById('nav-users');
             const navTransactions = document.getElementById('nav-transactions');
             if (currentUser.role === 'admin') {
-                navUsers.classList.remove('hide');
-                navTransactions.classList.remove('hide');
+                navUsers.classList.remove('hide'); navTransactions.classList.remove('hide');
             } else {
-                navUsers.classList.add('hide');
-                navTransactions.classList.add('hide');
+                navUsers.classList.add('hide'); navTransactions.classList.add('hide');
             }
-
             showPage('dashboard');
             checkLowStock(false);
         }
-        
-        // --- Users Handler Workspace ---
+
+        function showPage(pageId) {
+            if (pageId === 'transactions' && currentUser.role !== 'admin') return;
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hide'));
+            document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('bg-brand-darkRed', 'text-white'); el.classList.add('text-red-200'); });
+            
+            document.getElementById(`page-${pageId}`).classList.remove('hide');
+            document.getElementById(`nav-${pageId}`).classList.remove('text-red-200');
+            document.getElementById(`nav-${pageId}`).classList.add('bg-brand-darkRed', 'text-white');
+
+            const titles = { 'dashboard': 'ภาพรวมคลังสินค้า', 'inventory': 'จัดการสต๊อกสินค้า', 'pos': 'เบิก/จ่าย สินค้า', 'transactions': 'ประวัติความเคลื่อนไหว (ทั้งหมด)', 'users': 'จัดการผู้ใช้งาน' };
+            document.getElementById('page-title').innerText = titles[pageId];
+
+            if(pageId === 'dashboard') calculateDashboardStats();
+            if(pageId === 'pos') renderPOSProducts();
+            if(pageId === 'inventory') renderInventory();
+            if(pageId === 'transactions') renderAllTransactions();
+            if(pageId === 'users') renderUsers();
+
+            closeSidebarMobile();
+        }
+
         function renderUsers() {
             const tbody = document.getElementById('users-table-body');
             tbody.innerHTML = '';
-            
             users.forEach(u => {
                 const roleBadge = u.role === 'admin' 
-                    ? `<span class="bg-rose-50 text-brand-red px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-100">ผู้ดูแลระบบ (Admin)</span>` 
-                    : `<span class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200">พนักงาน (Staff)</span>`;
-                
+                    ? `<span class="bg-rose-50 text-brand-red px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-100">ผู้ดูแลระบบ</span>` 
+                    : `<span class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200">พนักงาน</span>`;
                 const deleteBtn = u.username === 'admin' 
                     ? `<span class="text-slate-400 text-xs bg-slate-50 px-3 py-1.5 rounded-xl font-medium border border-slate-100">ระบบหลัก</span>` 
                     : `<button onclick="deleteUser('${u.username}')" class="text-brand-red hover:text-white hover:bg-brand-red border border-rose-150 w-9 h-9 rounded-xl flex items-center justify-center transition btn-active mx-auto shadow-sm"><i class="fa-solid fa-trash"></i></button>`;
@@ -826,82 +747,59 @@
             const password = document.getElementById('new-password').value.trim();
             const role = document.getElementById('new-role').value;
 
-            if (users.find(u => u.username === username)) {
-                Swal.fire({ icon: 'error', title: 'ชื่อลงทะเบียนซ้ำ!', text: 'ระบบมีข้อมูลชื่อผู้ใช้นี้อยู่แล้ว กรุณาลองใช้ชื่ออื่น' });
+            if (users.find(u => String(u.username) === username)) {
+                Swal.fire({ icon: 'error', title: 'ชื่อลงทะเบียนซ้ำ!', text: 'ระบบมีข้อมูลชื่อผู้ใช้นี้อยู่แล้ว' });
                 return;
             }
 
             const newUser = { username, password, role };
-            users.push(newUser);
-            localStorage.setItem('pha_users', JSON.stringify(users));
-            
-            syncToGoogleSheet('save_user', newUser);
-
-            closeModal('modal-add-user');
-            renderUsers();
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'เพิ่มบัญชีผู้ใช้ใหม่สำเร็จ', showConfirmButton: false, timer: 1500 });
+            users.push(newUser); saveData(); syncToGoogleSheet('save_user', newUser);
+            closeModal('modal-add-user'); renderUsers();
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'เพิ่มบัญชีสำเร็จ', showConfirmButton: false, timer: 1500 });
         }
 
         function deleteUser(username) {
             if (username === 'admin') return;
-
             Swal.fire({
-                title: 'ยืนยันเพื่อทำการลบ?',
-                text: `คุณต้องการลบข้อมูลบัญชีผู้ใช้งาน "${username}" สิทธิ์ทั้งหมดจะหายไปทันที`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'ตกลง, ลบข้อมูล',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    users = users.filter(u => u.username !== username);
-                    localStorage.setItem('pha_users', JSON.stringify(users));
-                    
-                    syncToGoogleSheet('delete_user', { username: username });
-
-                    renderUsers();
-                    Swal.fire('ลบข้อมูลแล้ว!', 'ลบบัญชีเป้าหมายสำเร็จ', 'success');
+                title: 'ยืนยันเพื่อทำการลบ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6b7280', confirmButtonText: 'ตกลง, ลบข้อมูล', reverseButtons: true
+            }).then((r) => {
+                if (r.isConfirmed) {
+                    users = users.filter(u => String(u.username) !== String(username));
+                    saveData(); syncToGoogleSheet('delete_user', { username: username }); renderUsers();
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'ลบสำเร็จ', showConfirmButton: false, timer: 1500 });
                 }
             });
         }
 
-        // --- Inventory Control logic ---
         function renderInventory() {
-            const tbody = document.getElementById('inventory-table-body');
-            const emptyState = document.getElementById('empty-inventory');
+            const tbody = document.getElementById('inventory-table-body'), emptyState = document.getElementById('empty-inventory');
             const searchVal = document.getElementById('search-inventory').value.toLowerCase();
-            
             tbody.innerHTML = '';
             
             const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchVal));
 
-            if (filteredProducts.length === 0) {
-                emptyState.classList.remove('hide');
-            } else {
+            if (filteredProducts.length === 0) emptyState.classList.remove('hide');
+            else {
                 emptyState.classList.add('hide');
                 filteredProducts.forEach((p, index) => {
                     const isLow = p.stock <= LOW_STOCK_THRESHOLD;
                     const stockBadge = isLow 
-                        ? `<span class="bg-rose-50 text-brand-red text-xs font-bold px-3 py-1.5 rounded-xl border border-rose-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>${p.stock} ชิ้น</span>`
-                        : `<span class="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm whitespace-nowrap border border-emerald-200/50">${p.stock} ชิ้น</span>`;
+                        ? `<span class="bg-rose-50 text-brand-red text-xs font-bold px-3 py-1.5 rounded-xl border border-rose-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>${p.stock} ถุง</span>`
+                        : `<span class="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm whitespace-nowrap border border-emerald-200/50">${p.stock} ถุง</span>`;
 
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50/60 transition border-b border-slate-100 last:border-0';
                     tr.innerHTML = `
                         <td class="p-4 text-slate-400 font-mono text-xs whitespace-nowrap pl-6">PRD-${(index+1).toString().padStart(3, '0')}</td>
                         <td class="p-4 font-bold text-slate-800 whitespace-nowrap">${p.name}</td>
-                        <td class="p-4 text-right text-slate-600 font-medium whitespace-nowrap">${parseFloat(p.cost).toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
-                        <td class="p-4 text-right font-bold text-brand-red whitespace-nowrap">${parseFloat(p.price).toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
                         <td class="p-4 text-center whitespace-nowrap">${stockBadge}</td>
                         <td class="p-4 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center gap-2">
                                 <button onclick="openStockModal('${p.id}', 'in')" class="bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm border border-blue-100/30 flex items-center btn-active">
-                                    <i class="fa-solid fa-arrow-down-to-line mr-1.5"></i> นำเข้าคลัง
+                                    <i class="fa-solid fa-arrow-down-to-line mr-1.5"></i> รับเข้า
                                 </button>
-                                <button onclick="openStockModal('${p.id}', 'out')" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm border border-emerald-100/30 flex items-center btn-active">
-                                    <i class="fa-solid fa-paper-plane mr-1.5"></i> ตัดจำหน่าย
+                                <button onclick="openStockModal('${p.id}', 'out')" class="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm border border-orange-100/30 flex items-center btn-active">
+                                    <i class="fa-solid fa-paper-plane mr-1.5"></i> จ่ายออก
                                 </button>
                             </div>
                         </td>
@@ -919,536 +817,236 @@
 
         function saveProduct(e) {
             e.preventDefault();
-            const id = document.getElementById('prod-id').value;
-            const name = document.getElementById('prod-name').value.trim();
-            const cost = parseFloat(document.getElementById('prod-cost').value);
-            const price = parseFloat(document.getElementById('prod-price').value);
-            const initialStock = parseInt(document.getElementById('prod-stock').value) || 0;
-
-            const actionType = id ? 'edit_product' : 'add_product';
-            let targetId = id;
+            const id = document.getElementById('prod-id').value, name = document.getElementById('prod-name').value.trim(), initialStock = parseInt(document.getElementById('prod-stock').value) || 0;
+            const actionType = id ? 'edit_product' : 'add_product'; let targetId = id;
 
             if (id) {
                 const index = products.findIndex(p => p.id === id);
-                if (index > -1) {
-                    products[index].name = name;
-                    products[index].cost = cost;
-                    products[index].price = price;
-                }
+                if (index > -1) products[index].name = name; 
             } else {
                 targetId = 'P' + Date.now();
-                products.push({ id: targetId, name, cost, price, stock: initialStock });
+                products.push({ id: targetId, name, cost: 0, price: 0, stock: initialStock });
             }
 
-            const isAddProduct = actionType === 'add_product';
-            const tObj = {
-                id: 'T' + Date.now(),
-                batchId: '',
-                date: new Date().toISOString(),
-                productId: targetId,
-                productName: name,
-                type: actionType,
-                qty: isAddProduct ? initialStock : 0,
-                unitPrice: cost,
-                totalPrice: isAddProduct ? (initialStock * cost) : 0,
-                user: currentUser.username
-            };
-            transactions.unshift(tObj);
-
-            saveData();
-            closeModal('modal-add-product');
-            renderInventory();
-            if(!document.getElementById('page-dashboard').classList.contains('hide')) applyDashboardFilter();
-            checkLowStock(false);
+            const tObj = { id: 'T' + Date.now(), date: new Date().toISOString(), productId: targetId, productName: name, type: actionType, qty: actionType === 'add_product' ? initialStock : 0, user: currentUser.username };
+            transactions.unshift(tObj); saveData(); closeModal('modal-add-product'); renderInventory(); checkLowStock(false);
             
-            syncToGoogleSheet('save_product', products.find(p => p.id === targetId));
-            syncToGoogleSheet('add_transaction', tObj);
-
-            Swal.fire({
-                toast: true, position: 'top-end', icon: 'success', title: 'จัดเก็บและอัปเดตข้อมูลเสร็จสิ้น', showConfirmButton: false, timer: 1500
-            });
+            syncToGoogleSheet('save_product', products.find(p => p.id === targetId)); syncToGoogleSheet('add_transaction', tObj);
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'บันทึกสำเร็จ', showConfirmButton: false, timer: 1500 });
         }
 
         function editProduct(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
-            
-            document.getElementById('prod-id').value = p.id;
-            document.getElementById('prod-name').value = p.name;
-            document.getElementById('prod-cost').value = p.cost;
-            document.getElementById('prod-price').value = p.price;
-            document.getElementById('initial-stock-group').classList.add('hide');
-            
-            document.getElementById('product-modal-title').innerText = 'แก้ไขข้อมูลประเภทสินค้า';
+            const p = products.find(x => x.id === id); if (!p) return;
+            document.getElementById('prod-id').value = p.id; document.getElementById('prod-name').value = p.name;
+            document.getElementById('initial-stock-group').classList.add('hide'); document.getElementById('product-modal-title').innerText = 'แก้ไขข้อมูลสินค้า';
             openModal('modal-add-product');
         }
 
         function deleteProduct(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
-
+            const p = products.find(x => x.id === id); if (!p) return;
             Swal.fire({
-                title: 'ยืนยันต้องการลบสินค้า?',
-                text: "ยอดต้นทุนและยอดขายสะสมของสินค้านี้จะถูกยกเลิกออกจากการแสดงผลบน Dashboard ในรอบการค้นหานี้ทันที!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'ลบข้อมูลสินค้า',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
+                title: 'ยืนยันต้องการลบสินค้า?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6b7280', confirmButtonText: 'ลบข้อมูล', reverseButtons: true
+            }).then((r) => {
+                if (r.isConfirmed) {
                     products = products.filter(item => item.id !== id);
-
-                    const tObj = {
-                        id: 'T' + Date.now(),
-                        batchId: '',
-                        date: new Date().toISOString(),
-                        productId: id,
-                        productName: p.name,
-                        type: 'delete_product',
-                        qty: 0,
-                        unitPrice: 0,
-                        totalPrice: 0,
-                        user: currentUser.username
-                    };
-                    transactions.unshift(tObj);
-
-                    saveData();
-                    renderInventory();
-                    if(!document.getElementById('page-dashboard').classList.contains('hide')) applyDashboardFilter();
-                    checkLowStock(false);
-                    
-                    syncToGoogleSheet('delete_product', { id: id });
-                    syncToGoogleSheet('add_transaction', tObj);
-
-                    Swal.fire('ลบเรียบร้อย!', 'ลบประเภทและลบยอดคงเหลือเสร็จสิ้น', 'success');
+                    const tObj = { id: 'T' + Date.now(), date: new Date().toISOString(), productId: id, productName: p.name, type: 'delete_product', qty: 0, user: currentUser.username };
+                    transactions.unshift(tObj); saveData(); renderInventory(); checkLowStock(false);
+                    syncToGoogleSheet('delete_product', { id: id }); syncToGoogleSheet('add_transaction', tObj);
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'ลบสำเร็จ', showConfirmButton: false, timer: 1500 });
                 }
             });
         }
 
-        // --- Stock Actions Management ---
-        let currentStockPrice = 0;
-        
         function openStockModal(productId, type) {
-            const p = products.find(x => x.id === productId);
-            if (!p) return;
-
-            document.getElementById('stock-product-id').value = p.id;
-            document.getElementById('stock-action-type').value = type;
-            document.getElementById('stock-product-name').innerText = p.name;
-            document.getElementById('stock-current-val').innerText = p.stock;
+            const p = products.find(x => x.id === productId); if (!p) return;
+            document.getElementById('stock-product-id').value = p.id; document.getElementById('stock-action-type').value = type;
+            document.getElementById('stock-product-name').innerText = p.name; document.getElementById('stock-current-val').innerText = p.stock;
             document.getElementById('stock-qty').value = 1;
             
-            const header = document.getElementById('stock-modal-header');
-            const title = document.getElementById('stock-modal-title');
-            const btn = document.getElementById('stock-submit-btn');
-            const label = document.getElementById('stock-qty-label');
+            const header = document.getElementById('stock-modal-header'), title = document.getElementById('stock-modal-title'), btn = document.getElementById('stock-submit-btn');
 
             if (type === 'in') {
-                header.className = 'p-5 text-white flex justify-between items-center bg-blue-600 bg-gradient-to-r from-blue-600 to-indigo-600';
+                header.className = 'p-5 text-white flex justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-600';
                 btn.className = 'w-full bg-blue-600 text-white py-3.5 rounded-2xl font-bold hover:bg-blue-700 transition shadow-md text-lg btn-active';
-                title.innerHTML = '<i class="fa-solid fa-arrow-down-to-line mr-2"></i> นำสินค้าเข้าจัดเก็บคลังคลัง';
-                label.innerText = 'ปริมาณการจัดส่งเข้า (ชิ้น)';
-                currentStockPrice = p.cost;
-                btn.innerText = 'บันทึกการนำเข้าคลัง';
+                title.innerHTML = '<i class="fa-solid fa-arrow-down-to-line mr-2"></i> รับสินค้าเข้า'; btn.innerText = 'ยืนยันรับเข้าสต๊อก';
             } else {
-                header.className = 'p-5 text-white flex justify-between items-center bg-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600';
-                btn.className = 'w-full bg-emerald-600 text-white py-3.5 rounded-2xl font-bold hover:bg-emerald-700 transition shadow-md text-lg btn-active';
-                title.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> จำหน่ายและตัดสต๊อก';
-                label.innerText = 'ปริมาณจัดจำหน่ายสินค้า (ชิ้น)';
-                currentStockPrice = p.price;
-                btn.innerText = 'บันทึกตัดสต๊อกจำหน่าย';
+                header.className = 'p-5 text-white flex justify-between items-center bg-gradient-to-r from-orange-500 to-red-500';
+                btn.className = 'w-full bg-orange-600 text-white py-3.5 rounded-2xl font-bold hover:bg-orange-700 transition shadow-md text-lg btn-active';
+                title.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> จ่ายออก / เบิก'; btn.innerText = 'ยืนยันการจ่ายออก';
             }
-
-            updateStockTotalPrice();
-            
-            document.getElementById('stock-qty').addEventListener('input', updateStockTotalPrice);
-
             openModal('modal-stock');
         }
 
         function adjustQty(change) {
             const input = document.getElementById('stock-qty');
-            let val = parseInt(input.value) || 0;
-            val += change;
-            if (val < 1) val = 1;
-            input.value = val;
-            updateStockTotalPrice();
-        }
-
-        function updateStockTotalPrice() {
-            const qty = parseInt(document.getElementById('stock-qty').value) || 0;
-            const total = qty * currentStockPrice;
-            document.getElementById('stock-total-price').innerText = formatMoney(total);
+            let val = parseInt(input.value) || 0; val += change; if (val < 1) val = 1; input.value = val;
         }
 
         function processStock(e) {
             e.preventDefault();
-            const id = document.getElementById('stock-product-id').value;
-            const type = document.getElementById('stock-action-type').value;
-            const qty = parseInt(document.getElementById('stock-qty').value);
-            
-            const productIndex = products.findIndex(p => p.id === id);
-            if (productIndex === -1) return;
-
+            const id = document.getElementById('stock-product-id').value, type = document.getElementById('stock-action-type').value, qty = parseInt(document.getElementById('stock-qty').value);
+            const productIndex = products.findIndex(p => p.id === id); if (productIndex === -1) return;
             const p = products[productIndex];
 
             if (type === 'out' && qty > p.stock) {
-                Swal.fire({ icon: 'error', title: 'ปริมาณสินค้าไม่เพียงพอ!', text: `ขออภัย ปัจจุบันคลังมีรายการคงเหลือสำหรับทำรายการเพียง ${p.stock} ชิ้น` });
-                return;
+                Swal.fire({ icon: 'error', title: 'สต๊อกไม่เพียงพอ!', text: `ขออภัย ปัจจุบันคลังมีรายการคงเหลือเพียง ${p.stock} ถุง` }); return;
             }
 
-            if (type === 'in') {
-                products[productIndex].stock += qty;
-            } else {
-                products[productIndex].stock -= qty;
-            }
+            if (type === 'in') products[productIndex].stock += qty; else products[productIndex].stock -= qty;
 
-            const tObj = {
-                id: 'T' + Date.now(),
-                date: new Date().toISOString(),
-                productId: p.id,
-                productName: p.name,
-                type: type,
-                qty: qty,
-                unitPrice: type === 'in' ? p.cost : p.price,
-                totalPrice: qty * (type === 'in' ? p.cost : p.price),
-                user: currentUser.username
-            };
-            transactions.unshift(tObj);
-
-            saveData();
-            closeModal('modal-stock');
-            renderInventory();
-            if(!document.getElementById('page-dashboard').classList.contains('hide')) applyDashboardFilter();
-
-            syncToGoogleSheet('add_transaction', tObj);
-            syncToGoogleSheet('update_stock', { id: p.id, stock: p.stock });
+            const tObj = { id: 'T' + Date.now(), date: new Date().toISOString(), productId: p.id, productName: p.name, type: type, qty: qty, user: currentUser.username };
+            transactions.unshift(tObj); saveData(); closeModal('modal-stock'); renderInventory(); checkLowStock(false);
             
-            Swal.fire({
-                toast: true, position: 'top-end', icon: 'success', 
-                title: type === 'in' ? 'จัดซื้อนำเข้าเสร็จสิ้น' : 'จัดจำหน่ายตัดคลังเสร็จสิ้น', 
-                showConfirmButton: false, timer: 1500
-            });
-
-            checkLowStock(false);
+            syncToGoogleSheet('add_transaction', tObj); syncToGoogleSheet('update_stock', { id: p.id, stock: p.stock });
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: type === 'in' ? 'รับเข้าเสร็จสิ้น' : 'จ่ายออกเสร็จสิ้น', showConfirmButton: false, timer: 1500 });
         }
 
-        // --- Alarm and warning controls ---
         function checkLowStock(forceAlert = false) {
             const lowProducts = products.filter(p => p.stock <= LOW_STOCK_THRESHOLD);
-            const badge = document.getElementById('alert-badge');
-            const dashAlerts = document.getElementById('dashboard-alerts');
-            const listDiv = document.getElementById('low-stock-list');
+            const badge = document.getElementById('alert-badge'), dashAlerts = document.getElementById('dashboard-alerts'), listDiv = document.getElementById('low-stock-list');
 
             if (lowProducts.length > 0) {
-                badge.classList.remove('hide');
-                if (dashAlerts) dashAlerts.classList.remove('hide');
-                
+                badge.classList.remove('hide'); if (dashAlerts) dashAlerts.classList.remove('hide');
                 if (listDiv) {
                     listDiv.innerHTML = '';
                     lowProducts.forEach(p => {
-                        listDiv.innerHTML += `
-                            <div class="bg-white border border-rose-200 px-3.5 py-2 rounded-2xl text-sm flex items-center gap-2.5 shadow-sm font-semibold text-slate-700 animate-fadeIn">
-                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                                <span>${p.name}</span>
-                                <span class="bg-rose-50 text-brand-red px-2 py-0.5 rounded-lg text-xs font-bold">คงเหลือ ${p.stock}</span>
-                            </div>
-                        `;
+                        listDiv.innerHTML += `<div class="bg-white border border-rose-200 px-3.5 py-2 rounded-2xl text-sm flex items-center gap-2.5 shadow-sm font-semibold text-slate-700 animate-fadeIn"><span class="w-2 h-2 rounded-full bg-rose-500"></span><span>${p.name}</span><span class="bg-rose-50 text-brand-red px-2 py-0.5 rounded-lg text-xs font-bold">คงเหลือ ${p.stock} ถุง</span></div>`;
                     });
                 }
-
                 if (forceAlert) {
-                    let textList = lowProducts.map(p => `<div class="flex justify-between py-1 border-b border-slate-100"><span class="font-bold text-slate-700">${p.name}</span><span class="text-brand-red font-black">เหลือ ${p.stock} ชิ้น</span></div>`).join('');
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'สรุปแจ้งเตือนสต๊อกวิกฤต',
-                        html: `<div class="text-left mt-2 text-sm max-h-60 overflow-y-auto px-1">${textList}</div>`,
-                        confirmButtonColor: '#9B1B1B'
-                    });
+                    let textList = lowProducts.map(p => `<div class="flex justify-between py-1 border-b border-slate-100"><span class="font-bold text-slate-700">${p.name}</span><span class="text-brand-red font-black">เหลือ ${p.stock} ถุง</span></div>`).join('');
+                    Swal.fire({ icon: 'warning', title: 'สรุปแจ้งเตือนสต๊อกวิกฤต', html: `<div class="text-left mt-2 text-sm max-h-60 overflow-y-auto px-1">${textList}</div>`, confirmButtonColor: '#9B1B1B' });
                 }
             } else {
-                badge.classList.add('hide');
-                if (dashAlerts) dashAlerts.classList.add('hide');
-                if (forceAlert) {
-                    Swal.fire({ icon: 'success', title: 'สถานะระดับคลังปกติ', text: 'ข้อมูลสินค้าทุกรายการมีปริมาณเพียงพอสำหรับการขาย', confirmButtonColor: '#10B981' });
-                }
+                badge.classList.add('hide'); if (dashAlerts) dashAlerts.classList.add('hide');
+                if (forceAlert) Swal.fire({ icon: 'success', title: 'สถานะระดับคลังปกติ', text: 'ข้อมูลสินค้าทุกรายการมีปริมาณเพียงพอ', confirmButtonColor: '#10B981' });
             }
         }
 
-        // --- Filter Logic and Calculations ---
-        function applyDashboardFilter() {
-            const filterType = document.getElementById('dashboard-date-filter').value;
-            const customWrap = document.getElementById('custom-date-inputs');
-            
-            if (filterType === 'custom') {
-                customWrap.classList.remove('hide');
+        // ===============================================
+        // ฟังก์ชันของหน้า DASHBOARD (วิเคราะห์และสรุปยอด)
+        // ===============================================
+        function onDashboardFilterChange() {
+            const filterVal = document.getElementById('dashboard-filter').value;
+            const customDiv = document.getElementById('dashboard-custom-dates');
+            if (filterVal === 'custom') {
+                customDiv.classList.remove('hide');
             } else {
-                customWrap.classList.add('hide');
+                customDiv.classList.add('hide');
             }
-
-            const now = new Date();
-            let startDate = null;
-            let endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-
-            if (filterType === '7days') {
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 7);
-                startDate.setHours(0,0,0,0);
-            } else if (filterType === '1month') {
-                startDate = new Date(now);
-                startDate.setMonth(now.getMonth() - 1);
-                startDate.setHours(0,0,0,0);
-            } else if (filterType === '1year') {
-                startDate = new Date(now);
-                startDate.setFullYear(now.getFullYear() - 1);
-                startDate.setHours(0,0,0,0);
-            } else if (filterType === 'custom') {
-                const sVal = document.getElementById('date-start').value;
-                const eVal = document.getElementById('date-end').value;
-                if (sVal) {
-                    startDate = new Date(sVal);
-                    startDate.setHours(0,0,0,0);
-                }
-                if (eVal) {
-                    endDate = new Date(eVal);
-                    endDate.setHours(23,59,59,999);
-                }
-            }
-
-            let filteredT = transactions;
-            if (startDate) {
-                filteredT = filteredT.filter(t => {
-                    const tDate = new Date(t.date);
-                    return tDate >= startDate && tDate <= endDate;
-                });
-            }
-
-            calculateStats(filteredT);
+            calculateDashboardStats();
         }
 
-        function calculateStats(filteredTransactions) {
+        function calculateDashboardStats() {
+            // 1. คำนวณสต๊อกคงเหลือปัจจุบัน (Total Absolute Stock - ไม่กรองวันที่)
             const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
-            document.getElementById('stat-total-stock').innerHTML = `${totalStock.toLocaleString()} <span class="text-xs font-normal text-slate-500">ชิ้น</span>`;
+            document.getElementById('stat-total-stock').innerHTML = `${totalStock.toLocaleString()} <span class="text-sm font-normal text-slate-500">ถุง</span>`;
 
-            let totalCost = 0;
-            let totalRevenue = 0;
-            let chartDataMap = {};
-
-            filteredTransactions.forEach(t => {
-                const isProductExist = products.some(p => p.id === t.productId);
-                
-                if (isProductExist) {
-                    const dateKey = new Date(t.date).toLocaleDateString('th-TH');
-                    if (!chartDataMap[dateKey]) chartDataMap[dateKey] = { cost: 0, revenue: 0 };
-
-                    if (t.type === 'in' || (t.type === 'add_product' && t.qty > 0)) {
-                        totalCost += t.totalPrice;
-                        chartDataMap[dateKey].cost += t.totalPrice;
-                    }
-                    if (t.type === 'out') {
-                        totalRevenue += t.totalPrice;
-                        chartDataMap[dateKey].revenue += t.totalPrice;
-                    }
+            // 2. การจัดการเวลาสำหรับการคัดกรองข้อมูล
+            const filterVal = document.getElementById('dashboard-filter').value;
+            let startDate = new Date();
+            let endDate = new Date(); 
+            let isAllTime = (filterVal === 'all');
+            
+            if (!isAllTime) {
+                if (filterVal === '1day') {
+                    startDate.setDate(startDate.getDate() - 1);
+                } else if (filterVal === '1week') {
+                    startDate.setDate(startDate.getDate() - 7);
+                } else if (filterVal === '1month') {
+                    startDate.setMonth(startDate.getMonth() - 1);
+                } else if (filterVal === '1year') {
+                    startDate.setFullYear(startDate.getFullYear() - 1);
+                } else if (filterVal === 'custom') {
+                    const sdVal = document.getElementById('dash-start-date').value;
+                    const edVal = document.getElementById('dash-end-date').value;
+                    
+                    if (sdVal) { startDate = new Date(sdVal); startDate.setHours(0, 0, 0, 0); } 
+                    else { startDate = new Date(0); } // ดึงอดีตมาทั้งหมด
+                    
+                    if (edVal) { endDate = new Date(edVal); endDate.setHours(23, 59, 59, 999); }
                 }
-            });
-
-            document.getElementById('stat-total-cost').innerText = formatMoney(totalCost);
-            document.getElementById('stat-total-revenue').innerText = formatMoney(totalRevenue);
-            
-            const netProfit = totalRevenue - totalCost;
-            const profitEl = document.getElementById('stat-net-profit');
-            profitEl.innerText = formatMoney(netProfit);
-            
-            if (netProfit < 0) {
-                profitEl.className = 'text-2xl font-extrabold text-rose-600 leading-tight truncate max-w-[150px]';
-            } else if (netProfit > 0) {
-                profitEl.className = 'text-2xl font-extrabold text-emerald-600 leading-tight truncate max-w-[150px]';
-            } else {
-                profitEl.className = 'text-2xl font-extrabold text-slate-800 leading-tight truncate max-w-[150px]';
             }
 
-            renderChart(chartDataMap);
-        }
-
-        function renderChart(dataMap) {
-            const ctx = document.getElementById('dashboardChart').getContext('2d');
-            
-            if (dashChart) {
-                dashChart.destroy();
-            }
-
-            const labels = Object.keys(dataMap).sort((a,b) => {
-                const [d1, m1, y1] = a.split('/');
-                const [d2, m2, y2] = b.split('/');
-                return new Date(y1, m1-1, d1) - new Date(y2, m2-1, d2);
-            });
-            
-            const revenueData = labels.map(l => dataMap[l].revenue);
-            const costData = labels.map(l => dataMap[l].cost);
-
-            const isMobile = window.innerWidth < 768;
-
-            dashChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels.length > 0 ? labels : ['ไม่มีประวัติรายการในช่วงเวลานี้'],
-                    datasets: [
-                        {
-                            label: 'ยอดจำหน่ายได้รวม (บาท)',
-                            data: labels.length > 0 ? revenueData : [0],
-                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            borderWidth: 1.5,
-                            borderRadius: 8
-                        },
-                        {
-                            label: 'ต้นทุนสินค้าสะสม (บาท)',
-                            data: labels.length > 0 ? costData : [0],
-                            backgroundColor: 'rgba(249, 115, 22, 0.85)',
-                            borderColor: 'rgba(249, 115, 22, 1)',
-                            borderWidth: 1.5,
-                            borderRadius: 8
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: isMobile ? 'bottom' : 'top',
-                            labels: { font: { family: 'Prompt', size: 12, weight: '500' } }
-                        },
-                        tooltip: { titleFont: { family: 'Prompt', size: 13 }, bodyFont: { family: 'Prompt', size: 12 } }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { font: { family: 'Prompt', size: 11 } } },
-                        x: { ticks: { font: { family: 'Prompt', size: 11 } } }
-                    }
-                }
-            });
-        }
-
-        // --- History transactions workspace ---
-        function renderTransactions() {
-            const tbody = document.getElementById('transaction-table-body');
-            const emptyState = document.getElementById('empty-transactions');
+            // 3. กรองและคำนวณข้อมูลจาก Transactions
+            let totalIn = 0;
+            let totalOut = 0;
+            const tbody = document.getElementById('dashboard-tx-body');
+            const emptyState = document.getElementById('dashboard-tx-empty');
             tbody.innerHTML = '';
+            
+            const filteredTx = transactions.filter(t => {
+                if (isAllTime) return true;
+                const tDate = new Date(t.date);
+                return (tDate >= startDate && tDate <= endDate);
+            });
 
-            if (transactions.length === 0) {
+            if(filteredTx.length === 0) {
                 emptyState.classList.remove('hide');
             } else {
                 emptyState.classList.add('hide');
-                transactions.forEach(t => {
-                    let typeBadge = '';
-                    let amountClass = 'text-slate-500';
-                    let prefix = '';
-                    let qtyFormat = t.qty;
-
-                    if (t.type === 'out') {
-                        typeBadge = `<span class="bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-arrow-up-right mr-1.5 text-emerald-500"></i>จำหน่ายออก</span>`;
-                        amountClass = 'text-emerald-600';
-                        prefix = '+';
-                    } else if (t.type === 'in') {
-                        typeBadge = `<span class="bg-blue-50 text-blue-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-blue-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-arrow-down-left mr-1.5 text-blue-500"></i>นำเข้าสินค้า</span>`;
-                        amountClass = 'text-blue-600';
-                        prefix = '-';
-                    } else if (t.type === 'add_product') {
-                        typeBadge = `<span class="bg-indigo-50 text-indigo-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-indigo-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-plus-circle mr-1.5 text-indigo-500"></i>เพิ่มประเภท</span>`;
-                        qtyFormat = t.qty > 0 ? t.qty : '-';
-                        if (t.qty > 0) {
-                            amountClass = 'text-blue-600';
-                            prefix = '-';
-                        }
-                    } else if (t.type === 'edit_product') {
-                        typeBadge = `<span class="bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-pen-to-square mr-1.5 text-amber-500"></i>แก้ไขข้อมูล</span>`;
-                        qtyFormat = '-';
-                    } else if (t.type === 'delete_product') {
-                        typeBadge = `<span class="bg-rose-50 text-brand-red px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-trash-can mr-1.5 text-rose-500"></i>ลบรายการ</span>`;
-                        qtyFormat = '-';
+                filteredTx.forEach(t => {
+                    let typeBadge = '', qtyFormat = t.qty, prefix = '';
+                    
+                    if (t.type === 'out') { 
+                        typeBadge = `<span class="bg-orange-50 text-orange-800 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-orange-200/50">จ่ายออก</span>`; 
+                        prefix = '-'; 
+                        totalOut += (t.qty || 0);
+                    }
+                    else if (t.type === 'in') { 
+                        typeBadge = `<span class="bg-blue-50 text-blue-800 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-blue-200/50">รับเข้า</span>`; 
+                        prefix = '+'; 
+                        totalIn += (t.qty || 0);
+                    }
+                    else if (t.type === 'add_product') { 
+                        typeBadge = `<span class="bg-indigo-50 text-indigo-800 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-indigo-200/50">ตั้งต้น</span>`; 
+                        qtyFormat = t.qty > 0 ? t.qty : '-'; 
+                        if (t.qty > 0) { prefix = '+'; totalIn += (t.qty || 0); }
                     }
 
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-slate-50/50 transition border-b border-slate-100 last:border-0';
-                    tr.innerHTML = `
-                        <td class="p-4 text-slate-500 font-mono text-sm whitespace-nowrap pl-6">${formatDate(t.date)}</td>
-                        <td class="p-4 text-sm font-semibold text-slate-700 whitespace-nowrap"><i class="fa-solid fa-user-circle mr-1.5 text-slate-400"></i>${t.user || 'System'}</td>
-                        <td class="p-4 whitespace-nowrap">${typeBadge}</td>
-                        <td class="p-4 font-bold text-slate-850 whitespace-nowrap">${t.productName}</td>
-                        <td class="p-4 text-center font-black text-slate-700 whitespace-nowrap">${qtyFormat}</td>
-                        <td class="p-4 text-right font-black ${amountClass} whitespace-nowrap pr-6">${t.totalPrice > 0 ? prefix + ' ' + formatMoney(t.totalPrice) : '-'}</td>
-                    `;
-                    tbody.appendChild(tr);
+                    // แสดงเฉพาะรายการ In/Out ในตาราง Dashboard
+                    if (['in', 'out', 'add_product'].includes(t.type)) {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-100/50 transition border-b border-slate-100 last:border-0 text-[13px] text-slate-600';
+                        tr.innerHTML = `
+                            <td class="p-3 pl-6 whitespace-nowrap font-mono text-slate-500">${formatDate(t.date)}</td>
+                            <td class="p-3 whitespace-nowrap font-medium text-slate-700"><i class="fa-solid fa-user-circle mr-1 text-slate-400"></i>${t.user || 'System'}</td>
+                            <td class="p-3 whitespace-nowrap">${typeBadge}</td>
+                            <td class="p-3 font-semibold text-slate-800 whitespace-nowrap truncate max-w-[200px]">${t.productName}</td>
+                            <td class="p-3 text-center font-black ${prefix === '-' ? 'text-orange-600' : 'text-emerald-600'} whitespace-nowrap pr-6">${qtyFormat !== '-' ? prefix+qtyFormat : '-'}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
                 });
             }
+
+            // 4. อัปเดตตัวเลขการ์ดแสดงผลด้านบน
+            document.getElementById('stat-total-in').innerHTML = `${totalIn.toLocaleString()} <span class="text-sm font-normal text-slate-500">ถุง</span>`;
+            document.getElementById('stat-total-out').innerHTML = `${totalOut.toLocaleString()} <span class="text-sm font-normal text-slate-500">ถุง</span>`;
         }
 
-        function clearTransactions() {
-            Swal.fire({
-                title: 'ยืนยันเพื่อทำการล้างประวัติ?',
-                text: "การยืนยันข้อมูลจะทำให้ สรุปรายงานบัญชี ข้อมูลต้นทุนสะสม และกำไรในหน้าแรกกลายเป็น 0 ทั้งหมด! (ยอดสต๊อกคงคลังจริงจะยังมีผลเหมือนเดิม)",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'ล้างข้อมูลสะสมทั้งหมด',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    transactions = [];
-                    saveData();
-                    renderTransactions();
-                    applyDashboardFilter();
-                    
-                    syncToGoogleSheet('clear_transactions', {});
+        // ===============================================
 
-                    Swal.fire('ประมวลผลสำเร็จ!', 'ล้างข้อมูลรายการเรียบร้อยแล้ว', 'success');
-                }
-            });
-        }
-
-        // --- POS Product Rendering Workspace ---
         function renderPOSProducts() {
-            const grid = document.getElementById('pos-product-grid');
-            const searchVal = document.getElementById('search-pos') ? document.getElementById('search-pos').value.toLowerCase() : '';
+            const grid = document.getElementById('pos-product-grid'), searchVal = document.getElementById('search-pos') ? document.getElementById('search-pos').value.toLowerCase() : '';
             grid.innerHTML = '';
-
             const filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchVal));
 
             if (filteredProducts.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-400 bg-white rounded-3xl border border-slate-100/50"><i class="fa-solid fa-shopping-basket text-5xl mb-3 text-slate-200"></i><p class="font-bold">ไม่พบรายการประเภทสินค้าเป้าหมาย</p></div>`;
-                return;
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-400 bg-white rounded-3xl border border-slate-100/50"><i class="fa-solid fa-shopping-basket text-5xl mb-3 text-slate-200"></i><p class="font-bold">ไม่พบสินค้า</p></div>`; return;
             }
 
             filteredProducts.forEach(p => {
-                const inCart = cart.find(item => item.id === p.id);
-                const cartQty = inCart ? inCart.qty : 0;
-                const availableStock = p.stock - cartQty;
-                const isOutOfStock = availableStock <= 0;
-
+                const inCart = cart.find(item => item.id === p.id), availableStock = p.stock - (inCart ? inCart.qty : 0), isOutOfStock = availableStock <= 0;
                 const card = document.createElement('div');
                 card.className = `bg-white rounded-3xl p-5 border flex flex-col justify-between transition-all duration-200 ${isOutOfStock ? 'opacity-50 border-slate-200 grayscale-[40%] cursor-not-allowed' : 'hover:border-brand-red hover:shadow-premium cursor-pointer border-transparent active:scale-[0.97]'}`;
-                if (!isOutOfStock) {
-                    card.onclick = () => addToCart(p.id);
-                }
+                if (!isOutOfStock) card.onclick = () => addToCart(p.id);
 
                 card.innerHTML = `
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs ${availableStock <= LOW_STOCK_THRESHOLD ? 'bg-rose-50 text-brand-red' : 'bg-slate-100 text-slate-500'} px-2.5 py-1 rounded-xl font-bold">คลัง: ${availableStock}</span>
-                        </div>
-                        <h4 class="font-bold text-slate-800 text-base leading-snug line-clamp-2 pt-2">${p.name}</h4>
-                    </div>
-                    <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-100/50">
-                        <span class="font-black text-brand-red text-xl">฿${p.price.toLocaleString()}</span>
-                        ${isOutOfStock 
-                            ? `<span class="text-xs font-black bg-slate-200 text-slate-600 px-3 py-1.5 rounded-xl">สินค้าหมด!</span>`
-                            : `<button class="w-9 h-9 rounded-xl bg-red-50 text-brand-red hover:bg-brand-red hover:text-white flex items-center justify-center transition duration-150 pointer-events-none"><i class="fa-solid fa-plus text-sm"></i></button>`
-                        }
+                    <div class="space-y-1"><h4 class="font-bold text-slate-800 text-base leading-snug line-clamp-2 pt-2">${p.name}</h4></div>
+                    <div class="flex justify-between items-end mt-4 pt-3 border-t border-slate-100/50">
+                        <span class="text-sm font-bold text-slate-500">คลัง: <span class="text-slate-800">${availableStock} ถุง</span></span>
+                        ${isOutOfStock ? `<span class="text-xs font-black bg-slate-200 text-slate-600 px-3 py-1.5 rounded-xl">หมด!</span>` : `<div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center transition duration-150 pointer-events-none border border-blue-100"><i class="fa-solid fa-plus text-sm"></i></div>`}
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1457,82 +1055,40 @@
         }
 
         function addToCart(id) {
-            const p = products.find(x => x.id === id);
-            if (!p) return;
-
+            const p = products.find(x => x.id === id); if (!p) return;
             const cartItem = cart.find(item => item.id === id);
-            const currentQty = cartItem ? cartItem.qty : 0;
-
-            if (currentQty + 1 > p.stock) {
-                Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'สินค้าชิ้นนี้มีในคลังไม่พอออกบิล!', showConfirmButton: false, timer: 1500 });
-                return;
-            }
-
-            if (cartItem) {
-                cartItem.qty += 1;
-            } else {
-                cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 });
-            }
-            
-            if (navigator.vibrate) navigator.vibrate(55);
-            
+            if ((cartItem ? cartItem.qty : 0) + 1 > p.stock) { Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'สต๊อกไม่พอเบิก!', showConfirmButton: false, timer: 1500 }); return; }
+            if (cartItem) cartItem.qty += 1; else cart.push({ id: p.id, name: p.name, qty: 1 });
+            if (navigator.vibrate) navigator.vibrate(50);
             renderPOSProducts(); 
         }
 
         function updateCartQty(id, change) {
-            const index = cart.findIndex(item => item.id === id);
-            if (index === -1) return;
+            const index = cart.findIndex(item => item.id === id); if (index === -1) return;
             const p = products.find(x => x.id === id);
-            
             cart[index].qty += change;
-
-            if (cart[index].qty > p.stock) {
-                cart[index].qty = p.stock; 
-                Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: 'ถึงข้อจำกัดยอดคงคลังขณะนี้แล้ว', showConfirmButton: false, timer: 1500 });
-            }
-            if (cart[index].qty <= 0) {
-                cart.splice(index, 1); 
-            }
+            if (cart[index].qty > p.stock) { cart[index].qty = p.stock; Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: 'ถึงข้อจำกัดยอดคงคลังแล้ว', showConfirmButton: false, timer: 1500 }); }
+            if (cart[index].qty <= 0) cart.splice(index, 1);
             renderPOSProducts();
         }
 
         function renderCart() {
-            const container = document.getElementById('pos-cart-items');
-            const totalQtyEl = document.getElementById('pos-total-qty');
-            const totalPriceEl = document.getElementById('pos-total-price');
-            const btnCheckout = document.getElementById('btn-checkout');
-            const badgeEl = document.getElementById('pos-cart-badge');
-
-            container.innerHTML = '';
-            let totalQty = 0;
-            let totalPrice = 0;
-
-            badgeEl.innerText = `${cart.length} รายการ`;
+            const container = document.getElementById('pos-cart-items'), totalQtyEl = document.getElementById('pos-total-qty'), btnCheckout = document.getElementById('btn-checkout'), badgeEl = document.getElementById('pos-cart-badge');
+            container.innerHTML = ''; let totalQty = 0; badgeEl.innerText = `${cart.length} รายการ`;
 
             if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center text-slate-400 py-16 flex flex-col items-center justify-center h-full space-y-3">
-                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 text-3xl">
-                            <i class="fa-solid fa-basket-shopping-simple"></i>
-                        </div>
-                        <p class="font-bold text-sm">ยังไม่มีรายการในตะกร้าบิล</p>
-                    </div>`;
+                container.innerHTML = `<div class="text-center text-slate-400 py-16 flex flex-col items-center justify-center h-full space-y-3"><div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 text-3xl"><i class="fa-solid fa-dolly"></i></div><p class="font-bold text-sm">ยังไม่มีรายการเบิก/จ่าย</p></div>`;
                 btnCheckout.disabled = true;
             } else {
                 btnCheckout.disabled = false;
                 cart.forEach(item => {
                     totalQty += item.qty;
-                    totalPrice += item.price * item.qty;
-
                     const row = document.createElement('div');
                     row.className = 'bg-white border border-slate-150 p-4 rounded-2xl shadow-sm flex flex-col gap-3 relative animate-fadeIn';
                     row.innerHTML = `
-                        <div class="flex justify-between font-bold text-slate-850 text-sm">
-                            <span class="truncate pr-4 leading-normal">${item.name}</span>
-                            <span class="text-brand-red shrink-0 text-base font-black">฿${(item.price * item.qty).toLocaleString()}</span>
-                        </div>
+                        <div class="font-bold text-slate-850 text-sm truncate pr-4">${item.name}</div>
                         <div class="flex justify-between items-center pt-1 border-t border-slate-100/30">
-                            <span class="text-xs text-slate-400 font-semibold">@ ฿${item.price.toLocaleString()}</span>
+                            <span class="text-xs text-slate-400 font-semibold">จำนวน (ถุง)</span>
                             <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-slate-50">
                                 <button onclick="updateCartQty('${item.id}', -1)" class="w-9 h-8 bg-slate-100 text-slate-500 hover:bg-slate-200 active:bg-slate-300 transition font-bold"><i class="fa-solid fa-minus text-xs"></i></button>
                                 <span class="w-10 text-center text-sm font-extrabold bg-white text-slate-800">${item.qty}</span>
@@ -1543,103 +1099,82 @@
                     container.appendChild(row);
                 });
             }
-            totalQtyEl.innerText = `${totalQty} ชิ้น`;
-            totalPriceEl.innerText = formatMoney(totalPrice);
+            totalQtyEl.innerText = `${totalQty} ถุง`;
         }
 
         function checkoutPOS() {
             if (cart.length === 0) return;
-
             Swal.fire({
-                title: 'ยืนยันการทำรายการขายสินค้า?',
-                text: `ยอดบิลเก็บรวมสุทธิทั้งสิ้น ${document.getElementById('pos-total-price').innerText} ยืนยันการชำระและตัดจำหน่ายสินค้า`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#16a34a',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'ยืนยัน, ชำระเงินเสร็จสิ้น',
-                cancelButtonText: 'ยกเลิก',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const now = new Date().toISOString();
-                    const batchId = 'B' + Date.now();
-
+                title: 'ยืนยันการเบิกจ่ายสินค้า?', text: `จำนวนทั้งหมด ${document.getElementById('pos-total-qty').innerText} ยืนยันการหักสต๊อก?`, icon: 'question',
+                showCancelButton: true, confirmButtonColor: '#2563eb', cancelButtonColor: '#6b7280', confirmButtonText: 'ยืนยัน', reverseButtons: true
+            }).then((r) => {
+                if (r.isConfirmed) {
+                    const now = new Date().toISOString(), batchId = 'B' + Date.now();
                     cart.forEach(item => {
                         const pIndex = products.findIndex(p => p.id === item.id);
                         if (pIndex > -1) {
                             products[pIndex].stock -= item.qty;
                             syncToGoogleSheet('update_stock', { id: item.id, stock: products[pIndex].stock });
                         }
-
-                        const tObj = {
-                            id: 'T' + Math.random().toString(36).substr(2, 9),
-                            batchId: batchId,
-                            date: now,
-                            productId: item.id,
-                            productName: item.name,
-                            type: 'out', 
-                            qty: item.qty,
-                            unitPrice: item.price,
-                            totalPrice: item.price * item.qty,
-                            user: currentUser.username
-                        };
-                        transactions.unshift(tObj);
-                        
-                        syncToGoogleSheet('add_transaction', tObj);
+                        const tObj = { id: 'T' + Math.random().toString(36).substr(2, 9), batchId: batchId, date: now, productId: item.id, productName: item.name, type: 'out', qty: item.qty, user: currentUser.username };
+                        transactions.unshift(tObj); syncToGoogleSheet('add_transaction', tObj);
                     });
-
-                    saveData();
-                    cart = []; 
-                    
-                    Swal.fire({
-                        icon: 'success', title: 'ทำรายการเสร็จสิ้น!', text: 'การขายและหักลบจำนวนสินค้าจัดเก็บในระบบเสร็จสมบูรณ์',
-                        timer: 2000, showConfirmButton: false
-                    });
-
-                    renderPOSProducts();
-                    if(!document.getElementById('page-dashboard').classList.contains('hide')) applyDashboardFilter();
-                    checkLowStock(false);
+                    saveData(); cart = []; 
+                    Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: 'หักสต๊อกเรียบร้อยแล้ว', timer: 2000, showConfirmButton: false });
+                    renderPOSProducts(); checkLowStock(false);
                 }
             });
         }
 
-        // --- Modals Engine with Smooth Transitions ---
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.remove('hide');
+        function renderAllTransactions() {
+            const tbody = document.getElementById('transaction-table-body'), emptyState = document.getElementById('empty-transactions');
+            tbody.innerHTML = '';
             
-            setTimeout(() => {
-                modal.firstElementChild.classList.remove('scale-95', 'opacity-0');
-                modal.firstElementChild.classList.add('scale-100', 'opacity-100');
-            }, 50);
-            
-            if (id === 'modal-add-product' && !document.getElementById('prod-id').value) {
-                document.getElementById('product-form').reset();
-                document.getElementById('initial-stock-group').classList.remove('hide');
-                document.getElementById('product-modal-title').innerText = 'เพิ่มข้อมูลประเภทสินค้าใหม่';
+            if (transactions.length === 0) emptyState.classList.remove('hide');
+            else {
+                emptyState.classList.add('hide');
+                transactions.forEach(t => {
+                    let typeBadge = '', qtyFormat = t.qty, prefix = '';
+                    if (t.type === 'out') { typeBadge = `<span class="bg-orange-50 text-orange-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-orange-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-arrow-up-right mr-1.5 text-orange-500"></i>จ่ายออก</span>`; prefix = '-'; }
+                    else if (t.type === 'in') { typeBadge = `<span class="bg-blue-50 text-blue-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-blue-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-arrow-down-left mr-1.5 text-blue-500"></i>รับเข้า</span>`; prefix = '+'; }
+                    else if (t.type === 'add_product') { typeBadge = `<span class="bg-indigo-50 text-indigo-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-indigo-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-plus-circle mr-1.5 text-indigo-500"></i>ตั้งต้น</span>`; qtyFormat = t.qty > 0 ? t.qty : '-'; if (t.qty > 0) prefix = '+'; }
+                    else if (t.type === 'edit_product') { typeBadge = `<span class="bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl text-xs font-bold border border-amber-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-pen-to-square mr-1.5 text-amber-500"></i>แก้ไข</span>`; qtyFormat = '-'; }
+                    else if (t.type === 'delete_product') { typeBadge = `<span class="bg-rose-50 text-brand-red px-3 py-1.5 rounded-xl text-xs font-bold border border-rose-200/50 shadow-sm whitespace-nowrap"><i class="fa-solid fa-trash-can mr-1.5 text-rose-500"></i>ลบ</span>`; qtyFormat = '-'; }
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50/50 transition border-b border-slate-100 last:border-0';
+                    tr.innerHTML = `
+                        <td class="p-4 text-slate-500 font-mono text-sm whitespace-nowrap pl-6">${formatDate(t.date)}</td>
+                        <td class="p-4 text-sm font-semibold text-slate-700 whitespace-nowrap"><i class="fa-solid fa-user-circle mr-1.5 text-slate-400"></i>${t.user || 'System'}</td>
+                        <td class="p-4 whitespace-nowrap">${typeBadge}</td>
+                        <td class="p-4 font-bold text-slate-850 whitespace-nowrap">${t.productName}</td>
+                        <td class="p-4 text-center font-black text-slate-700 whitespace-nowrap pr-6">${qtyFormat !== '-' ? prefix+qtyFormat : '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             }
         }
 
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            modal.firstElementChild.classList.add('scale-95', 'opacity-0');
-            modal.firstElementChild.classList.remove('scale-100', 'opacity-100');
-            
-            setTimeout(() => {
-                modal.classList.add('hide');
-                if (id === 'modal-add-product') {
-                    document.getElementById('product-form').reset();
-                    document.getElementById('prod-id').value = '';
-                }
-            }, 200);
+        function clearTransactions() {
+            Swal.fire({
+                title: 'ยืนยันเพื่อทำการล้างประวัติ?', text: "การดำเนินการนี้ไม่สามารถย้อนกลับได้", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6b7280', confirmButtonText: 'ล้างข้อมูล', reverseButtons: true
+            }).then((r) => {
+                if (r.isConfirmed) { transactions = []; saveData(); renderAllTransactions(); syncToGoogleSheet('clear_transactions', {}); Swal.fire('สำเร็จ!', 'ล้างข้อมูลประวัติเรียบร้อย', 'success'); }
+            });
         }
 
-        // --- LocalStorage persistence mapping ---
-        function saveData() {
-            localStorage.setItem('pha_products', JSON.stringify(products));
-            localStorage.setItem('pha_transactions', JSON.stringify(transactions));
+        function openModal(id) {
+            const modal = document.getElementById(id); modal.classList.remove('hide');
+            setTimeout(() => { modal.firstElementChild.classList.remove('scale-95', 'opacity-0'); modal.firstElementChild.classList.add('scale-100', 'opacity-100'); }, 50);
+            if (id === 'modal-add-product' && !document.getElementById('prod-id').value) { document.getElementById('product-form').reset(); document.getElementById('initial-stock-group').classList.remove('hide'); document.getElementById('product-modal-title').innerText = 'เพิ่มข้อมูลประเภทสินค้าใหม่'; }
         }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id); modal.firstElementChild.classList.add('scale-95', 'opacity-0'); modal.firstElementChild.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => { modal.classList.add('hide'); if (id === 'modal-add-product') { document.getElementById('product-form').reset(); document.getElementById('prod-id').value = ''; } }, 200);
+        }
+
+        function saveData() { localStorage.setItem('pha_products', JSON.stringify(products)); localStorage.setItem('pha_transactions', JSON.stringify(transactions)); localStorage.setItem('pha_users', JSON.stringify(users)); }
 
     </script>
 </body>

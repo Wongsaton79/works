@@ -190,14 +190,14 @@
                         </div>
                         
                         <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 w-full xl:w-auto">
-                            <!-- ตัวกรองช่วงเวลา -->
+                            <!-- ตัวกรองช่วงเวลา (อัปเดตใหม่ แยกวันนี้/เมื่อวาน) -->
                             <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 w-full sm:w-auto shadow-sm">
                                 <i class="fa-solid fa-calendar-day text-slate-400 text-sm mr-2.5"></i>
                                 <select id="dashboard-filter" onchange="onDashboardFilterChange()" class="bg-transparent text-sm font-semibold text-slate-700 outline-none w-full cursor-pointer focus:ring-0">
-                                    <option value="1day">วันนี้ / ย้อนหลัง 1 วัน</option>
+                                    <option value="today">วันนี้</option>
+                                    <option value="yesterday">เมื่อวาน</option>
                                     <option value="1week">ย้อนหลัง 1 สัปดาห์</option>
                                     <option value="1month">ย้อนหลัง 1 เดือน</option>
-                                    <option value="1year">ย้อนหลัง 1 ปี</option>
                                     <option value="all">ดูข้อมูลทั้งหมด (All Time)</option>
                                     <option value="custom">ระบุช่วงเวลาเอง...</option>
                                 </select>
@@ -212,7 +212,7 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto pr-1 pb-4 space-y-5">
+                    <div class="flex-1 overflow-y-auto pr-2 pb-6 space-y-6">
                         
                         <!-- Statistics Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -263,28 +263,67 @@
                             </div>
                         </div>
 
-                        <!-- Dashboard Mini Transactions (Filtered) -->
+                        <!-- ================= INTERACTIVE DASHBOARD ================= -->
                         <div class="bg-white rounded-3xl shadow-card border border-slate-150/60 overflow-hidden flex flex-col">
-                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                                <h4 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-list text-slate-400 mr-2"></i>รายการเคลื่อนไหว (ตามช่วงเวลาที่กรอง)</h4>
+                            <div class="p-5 border-b border-slate-100 bg-gradient-to-r from-orange-50/60 to-white flex justify-between items-center shrink-0">
+                                <h4 class="font-bold text-slate-800 text-base flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-brand-red text-white flex items-center justify-center shadow-sm">
+                                        <i class="fa-solid fa-chart-simple text-sm"></i>
+                                    </div> 
+                                    สรุปยอดจ่ายออก/ขาย (แยกตามสินค้า)
+                                </h4>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse min-w-[600px]">
+                            
+                            <!-- Content: Chart + Full List (No scroll inside) -->
+                            <div class="p-6 flex flex-col xl:flex-row gap-8">
+                                
+                                <!-- Chart Area -->
+                                <div id="chart-container" class="w-full xl:w-7/12 relative h-[350px] bg-slate-50/30 rounded-2xl border border-slate-100 p-4">
+                                    <canvas id="salesChart"></canvas>
+                                </div>
+
+                                <!-- Full List Area (Allows natural expansion) -->
+                                <div class="w-full xl:w-5/12 flex flex-col justify-start">
+                                    <h5 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider border-b border-slate-100 pb-2">รายละเอียดเรียงตามยอดขายสูงสุด</h5>
+                                    
+                                    <ul id="dashboard-product-out-summary" class="divide-y divide-slate-100 flex-1">
+                                        <!-- Injected Summary Items -->
+                                    </ul>
+                                    
+                                    <div id="dashboard-out-empty" class="hide h-full min-h-[200px] flex flex-col items-center justify-center text-slate-400 text-sm font-medium opacity-70">
+                                        <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-200"></i>
+                                        ไม่มีรายการจ่ายออกในช่วงเวลานี้
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ================= DASHBOARD MINI TRANSACTIONS (RAW LOGS) ================= -->
+                        <div class="bg-white rounded-3xl shadow-card border border-slate-150/60 overflow-hidden flex flex-col h-[400px]">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center shrink-0">
+                                <h4 class="font-bold text-slate-700 text-sm flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-md bg-slate-200 text-slate-600 flex items-center justify-center shadow-inner">
+                                        <i class="fa-solid fa-list text-xs"></i>
+                                    </div>
+                                    รายการความเคลื่อนไหวล่าสุด
+                                </h4>
+                            </div>
+                            <div class="flex-1 overflow-y-auto">
+                                <table class="w-full text-left border-collapse">
                                     <thead>
-                                        <tr class="bg-slate-50 text-slate-500 text-[11px] border-b border-slate-200 uppercase tracking-wider font-bold">
-                                            <th class="p-3 pl-6">วันที่-เวลา</th>
-                                            <th class="p-3">ผู้ทำรายการ</th>
-                                            <th class="p-3">ประเภท</th>
-                                            <th class="p-3">สินค้า</th>
-                                            <th class="p-3 text-center pr-6">ปริมาณ (ถุง)</th>
+                                        <tr class="bg-slate-50/80 text-slate-500 text-[11px] border-b border-slate-200 uppercase tracking-wider font-bold sticky top-0 z-10 backdrop-blur-md">
+                                            <th class="p-3 pl-5 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)]">วันที่-เวลา</th>
+                                            <th class="p-3 whitespace-nowrap shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)]">สินค้า</th>
+                                            <th class="p-3 whitespace-nowrap text-center shadow-[inset_0_-1px_0_rgba(226,232,240,0.8)] pr-5">ปริมาณ</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dashboard-tx-body" class="divide-y divide-slate-100">
                                         <!-- Injected rows -->
                                     </tbody>
                                 </table>
-                                <div id="dashboard-tx-empty" class="hide py-8 text-center text-slate-400 text-sm font-medium">
-                                    ไม่พบรายการเคลื่อนไหวในช่วงเวลานี้
+                                <div id="dashboard-tx-empty" class="hide h-full flex flex-col items-center justify-center text-slate-400 text-sm font-medium opacity-70 py-10">
+                                    <i class="fa-solid fa-receipt text-4xl mb-3 text-slate-200"></i>
+                                    ไม่พบรายการเคลื่อนไหว
                                 </div>
                             </div>
                         </div>
@@ -534,8 +573,8 @@
         const LOW_STOCK_THRESHOLD = 5;
         let cart = [];
         let isSidebarOpen = false;
+        let salesChartInstance = null; // เพิ่มตัวแปรสำหรับเก็บ Instance ของกราฟ
 
-        // อัปเดตลิงก์ใหม่ตามที่แจ้งมาแล้ว
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyofNwilnf-TIn9Q2Hcrr_J1cQSqVD-DCuqGX-AeKu0xM_O5pSkjHli0Rpc0bCvG3bFRA/exec"; 
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -709,7 +748,10 @@
             const titles = { 'dashboard': 'ภาพรวมคลังสินค้า', 'inventory': 'จัดการสต๊อกสินค้า', 'pos': 'เบิก/จ่าย สินค้า', 'transactions': 'ประวัติความเคลื่อนไหว (ทั้งหมด)', 'users': 'จัดการผู้ใช้งาน' };
             document.getElementById('page-title').innerText = titles[pageId];
 
-            if(pageId === 'dashboard') calculateDashboardStats();
+            if(pageId === 'dashboard') {
+                // เพิ่ม Timeout เพื่อให้ UI render ทันก่อนการวาด Chart
+                setTimeout(() => calculateDashboardStats(), 50);
+            }
             if(pageId === 'pos') renderPOSProducts();
             if(pageId === 'inventory') renderInventory();
             if(pageId === 'transactions') renderAllTransactions();
@@ -949,8 +991,16 @@
             let isAllTime = (filterVal === 'all');
             
             if (!isAllTime) {
-                if (filterVal === '1day') {
+                // Set default to today's start and end boundaries
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(23, 59, 59, 999);
+
+                if (filterVal === 'today') {
+                    // Do nothing, startDate and endDate are already set correctly for today
+                } else if (filterVal === 'yesterday') {
                     startDate.setDate(startDate.getDate() - 1);
+                    endDate = new Date(startDate); // Copy yesterday's start date
+                    endDate.setHours(23, 59, 59, 999); // Set to end of yesterday
                 } else if (filterVal === '1week') {
                     startDate.setDate(startDate.getDate() - 7);
                 } else if (filterVal === '1month') {
@@ -975,6 +1025,9 @@
             const emptyState = document.getElementById('dashboard-tx-empty');
             tbody.innerHTML = '';
             
+            // Object สำหรับเก็บยอดรวมของสินค้าที่ถูกขาย/จ่ายออกไป (แยกตาม productId)
+            const productOutSummary = {};
+
             const filteredTx = transactions.filter(t => {
                 if (isAllTime) return true;
                 const tDate = new Date(t.date);
@@ -992,6 +1045,12 @@
                         typeBadge = `<span class="bg-orange-50 text-orange-800 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-orange-200/50">จ่ายออก</span>`; 
                         prefix = '-'; 
                         totalOut += (t.qty || 0);
+
+                        // สะสมยอดจ่ายออกของแต่ละสินค้า
+                        if (!productOutSummary[t.productId]) {
+                            productOutSummary[t.productId] = { name: t.productName, qty: 0 };
+                        }
+                        productOutSummary[t.productId].qty += Number(t.qty || 0);
                     }
                     else if (t.type === 'in') { 
                         typeBadge = `<span class="bg-blue-50 text-blue-800 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-blue-200/50">รับเข้า</span>`; 
@@ -1009,18 +1068,116 @@
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-slate-100/50 transition border-b border-slate-100 last:border-0 text-[13px] text-slate-600';
                         tr.innerHTML = `
-                            <td class="p-3 pl-6 whitespace-nowrap font-mono text-slate-500">${formatDate(t.date)}</td>
-                            <td class="p-3 whitespace-nowrap font-medium text-slate-700"><i class="fa-solid fa-user-circle mr-1 text-slate-400"></i>${t.user || 'System'}</td>
-                            <td class="p-3 whitespace-nowrap">${typeBadge}</td>
-                            <td class="p-3 font-semibold text-slate-800 whitespace-nowrap truncate max-w-[200px]">${t.productName}</td>
-                            <td class="p-3 text-center font-black ${prefix === '-' ? 'text-orange-600' : 'text-emerald-600'} whitespace-nowrap pr-6">${qtyFormat !== '-' ? prefix+qtyFormat : '-'}</td>
+                            <td class="p-3 pl-5 whitespace-nowrap font-mono text-slate-500">${formatDate(t.date)}</td>
+                            <td class="p-3 font-semibold text-slate-800 whitespace-nowrap truncate max-w-[150px]">${t.productName}</td>
+                            <td class="p-3 text-center font-black ${prefix === '-' ? 'text-orange-600' : 'text-emerald-600'} whitespace-nowrap pr-5">${qtyFormat !== '-' ? prefix+qtyFormat : '-'}</td>
                         `;
                         tbody.appendChild(tr);
                     }
                 });
             }
 
-            // 4. อัปเดตตัวเลขการ์ดแสดงผลด้านบน
+            // 4. จัดเตรียมข้อมูลสำหรับ Render รายการและกราฟ (เรียงจากมากไปน้อย)
+            const summaryListEl = document.getElementById('dashboard-product-out-summary');
+            const emptySummaryEl = document.getElementById('dashboard-out-empty');
+            const chartContainer = document.getElementById('chart-container');
+            summaryListEl.innerHTML = '';
+
+            const summaryArray = Object.values(productOutSummary).sort((a, b) => b.qty - a.qty);
+
+            if (summaryArray.length === 0) {
+                emptySummaryEl.classList.remove('hide');
+                chartContainer.classList.add('hide');
+            } else {
+                emptySummaryEl.classList.add('hide');
+                chartContainer.classList.remove('hide');
+                
+                // Render List
+                summaryArray.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'py-3.5 flex justify-between items-center group border-b border-slate-100/50 last:border-0 hover:bg-orange-50/30 px-3 rounded-xl transition';
+                    li.innerHTML = `
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-7 h-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 shadow-sm font-bold text-xs">
+                                ${index + 1}
+                            </div>
+                            <span class="font-bold text-slate-700 text-sm line-clamp-1 group-hover:text-brand-red transition">${item.name}</span>
+                        </div>
+                        <div class="text-right shrink-0 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                            <span class="font-black text-brand-red text-base">${item.qty.toLocaleString()}</span>
+                            <span class="text-xs text-slate-500 ml-0.5 font-semibold">ถุง</span>
+                        </div>
+                    `;
+                    summaryListEl.appendChild(li);
+                });
+
+                // Render Chart.js
+                const canvas = document.getElementById('salesChart');
+                if (canvas) {
+                    if (salesChartInstance) {
+                        salesChartInstance.destroy();
+                    }
+                    
+                    const labels = summaryArray.map(item => item.name.substring(0, 15) + (item.name.length > 15 ? '...' : '')); // ตัดคำถ้ายาวไป
+                    const data = summaryArray.map(item => item.qty);
+                    
+                    const ctx = canvas.getContext('2d');
+                    
+                    // สร้างไล่สี (Gradient) สวยๆ ให้กับแท่งกราฟ
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                    gradient.addColorStop(0, 'rgba(234, 88, 12, 0.9)'); // Orange 600
+                    gradient.addColorStop(1, 'rgba(251, 146, 60, 0.3)'); // Orange 400 fade
+
+                    salesChartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: ' ยอดจ่ายออก (ถุง)',
+                                data: data,
+                                backgroundColor: gradient,
+                                borderRadius: 6,
+                                borderSkipped: false,
+                                // ปรับขนาดแท่งกราฟให้พอดี
+                                barThickness: Math.min(50, Math.max(15, 400 / (labels.length || 1)))
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                    titleFont: { family: 'Prompt', size: 13 },
+                                    bodyFont: { family: 'Prompt', size: 14, weight: 'bold' },
+                                    padding: 12,
+                                    cornerRadius: 12,
+                                    displayColors: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#f1f5f9', drawBorder: false },
+                                    border: { display: false },
+                                    ticks: { font: { family: 'Prompt' }, color: '#94a3b8', stepSize: 1 }
+                                },
+                                x: {
+                                    grid: { display: false, drawBorder: false },
+                                    border: { display: false },
+                                    ticks: { font: { family: 'Prompt' }, color: '#64748b', maxRotation: 45, minRotation: 0 }
+                                }
+                            },
+                            animation: {
+                                y: { duration: 1000, easing: 'easeOutQuart' }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // 5. อัปเดตตัวเลขการ์ดแสดงผลด้านบน
             document.getElementById('stat-total-in').innerHTML = `${totalIn.toLocaleString()} <span class="text-sm font-normal text-slate-500">ถุง</span>`;
             document.getElementById('stat-total-out').innerHTML = `${totalOut.toLocaleString()} <span class="text-sm font-normal text-slate-500">ถุง</span>`;
         }

@@ -113,17 +113,19 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     window.appState.user = user;
-                    startListeners(user.uid);
+                    // เริ่มฟังการเปลี่ยนแปลงของข้อมูล
+                    startListeners();
                     render();
                 }
             });
         }
 
         // ==========================================
-        // DATABASE LISTENERS
+        // DATABASE LISTENERS (เปลี่ยนไปใช้ Shared Public Path)
         // ==========================================
-        function startListeners(uid) {
-            const ordersRef = collection(db, 'artifacts', appId, 'users', uid, 'orders');
+        function startListeners() {
+            // Listen to Orders (ข้อมูลกลางของร้าน)
+            const ordersRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
             onSnapshot(ordersRef, (snapshot) => {
                 window.appState.orders = snapshot.docs.map(doc => {
                     const data = doc.data();
@@ -133,7 +135,8 @@
                 if(window.appState.view === 'kitchen' || window.appState.view === 'admin') render();
             }, (error) => console.error(error));
 
-            const expensesRef = collection(db, 'artifacts', appId, 'users', uid, 'expenses');
+            // Listen to Expenses (ข้อมูลกลางของร้าน)
+            const expensesRef = collection(db, 'artifacts', appId, 'public', 'data', 'expenses');
             onSnapshot(expensesRef, (snapshot) => {
                 window.appState.expenses = snapshot.docs.map(doc => {
                     const data = doc.data();
@@ -206,12 +209,14 @@
                 const totalAmount = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
                 
                 try {
-                    await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'orders'), {
+                    // บันทึกออเดอร์ลง Shared Public Path
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), {
                         customerName: customerName || 'ลูกค้าทั่วไป',
                         items: cart,
                         total: totalAmount,
                         status: 'active',
                         createdAt: serverTimestamp(),
+                        createdBy: user.uid // เก็บไว้เป็นข้อมูลอ้างอิงว่าส่งจากเครื่องไหน (ถ้าต้องการ)
                     });
                     
                     document.getElementById('app').innerHTML = `
@@ -240,7 +245,8 @@
             completeOrder: async (orderId) => {
                 if (!window.appState.user) return;
                 try {
-                    await updateDoc(doc(db, 'artifacts', appId, 'users', window.appState.user.uid, 'orders', orderId), {
+                    // อัปเดตสถานะออเดอร์ใน Shared Public Path
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId), {
                         status: 'completed',
                         completedAt: serverTimestamp()
                     });
@@ -264,10 +270,12 @@
                 if(!title || !amount) return;
 
                 try {
-                    await addDoc(collection(db, 'artifacts', appId, 'users', window.appState.user.uid, 'expenses'), {
+                    // บันทึกรายจ่ายลง Shared Public Path
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), {
                         title: title,
                         amount: amount,
                         createdAt: serverTimestamp(),
+                        createdBy: window.appState.user.uid
                     });
                     document.getElementById('expTitle').value = '';
                     document.getElementById('expAmount').value = '';

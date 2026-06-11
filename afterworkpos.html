@@ -24,6 +24,10 @@
         .dark-glass { background: rgba(26, 26, 26, 0.85); backdrop-filter: blur(16px); }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* เพิ่ม Animation สำหรับ Popup Modal */
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 overflow-hidden">
@@ -69,10 +73,10 @@
         // DATA & STATE MANAGEMENT
         // ==========================================
         const MENU_ITEMS = [
-            { id: 'm1', name: 'กุ้งแช่น้ำปลา (ชุดเล็ก)', price: 59, category: 'เมนูยำ/พล่าสุดแซ่บ', image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=600&q=80' },
-            { id: 'm2', name: 'กุ้งแช่น้ำปลา (ชุดใหญ่)', price: 100, category: 'เมนูยำ/พล่าสุดแซ่บ', image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=600&q=80' },
-            { id: 'm3', name: 'หมูมะนาว (ชุดเล็ก)', price: 59, category: 'เมนูยำ/พล่าสุดแซ่บ', image: 'https://images.unsplash.com/photo-1626804475297-4160bbcebaa3?auto=format&fit=crop&w=600&q=80' },
-            { id: 'm4', name: 'หมูมะนาว (ชุดใหญ่)', price: 100, category: 'เมนูยำ/พล่าสุดแซ่บ', image: 'https://images.unsplash.com/photo-1626804475297-4160bbcebaa3?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm1', name: 'กุ้งแช่น้ำปลา (ชุดเล็ก)', price: 59, category: 'เมนูกุ้งแช่น้ำปลา', image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm2', name: 'กุ้งแช่น้ำปลา (ชุดใหญ่)', price: 100, category: 'เมนูกุ้งแช่น้ำปลา', image: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm3', name: 'หมูมะนาว (ชุดเล็ก)', price: 59, category: 'เมนูหมูมะนาว', image: 'https://images.unsplash.com/photo-1626804475297-4160bbcebaa3?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm4', name: 'หมูมะนาว (ชุดใหญ่)', price: 100, category: 'เมนูหมูมะนาว', image: 'https://images.unsplash.com/photo-1626804475297-4160bbcebaa3?auto=format&fit=crop&w=600&q=80' },
             { id: 's1', name: 'สุกี้แห้งหมู', price: 40, category: 'เมนูสุกี้คั่วกระทะ', image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=600&q=80' },
             { id: 's2', name: 'สุกี้แห้งกุ้ง', price: 50, category: 'เมนูสุกี้คั่วกระทะ', image: 'https://images.unsplash.com/photo-1548943487-a2e4e43b4859?auto=format&fit=crop&w=600&q=80' },
             { id: 's3', name: 'สุกี้แห้งรวม', price: 60, category: 'เมนูสุกี้คั่วกระทะ', image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?auto=format&fit=crop&w=600&q=80' },
@@ -80,14 +84,15 @@
 
         window.appState = {
             user: null,
-            view: 'home', // 'home', 'customer', 'kitchen', 'admin'
+            view: 'home', 
             orders: [],
             expenses: [],
             cart: [],
             customerName: '',
             isOrdering: false,
-            adminFilter: 'today', // today, week, month, year
-            kitchenTimerInterval: null
+            adminFilter: 'today',
+            kitchenTimerInterval: null,
+            isCartOpen: false // สถานะเปิด/ปิด Modal ตะกร้าสำหรับมือถือ
         };
 
         // ==========================================
@@ -114,22 +119,19 @@
         }
 
         // ==========================================
-        // DATABASE LISTENERS (No Complex Queries)
+        // DATABASE LISTENERS
         // ==========================================
         function startListeners(uid) {
-            // Listen to Orders
             const ordersRef = collection(db, 'artifacts', appId, 'users', uid, 'orders');
             onSnapshot(ordersRef, (snapshot) => {
                 window.appState.orders = snapshot.docs.map(doc => {
                     const data = doc.data();
-                    // Convert Firestore timestamp to JS milliseconds
                     data.timeMs = data.createdAt?.seconds ? data.createdAt.seconds * 1000 : Date.now();
                     return { id: doc.id, ...data };
                 });
                 if(window.appState.view === 'kitchen' || window.appState.view === 'admin') render();
             }, (error) => console.error(error));
 
-            // Listen to Expenses
             const expensesRef = collection(db, 'artifacts', appId, 'users', uid, 'expenses');
             onSnapshot(expensesRef, (snapshot) => {
                 window.appState.expenses = snapshot.docs.map(doc => {
@@ -147,12 +149,20 @@
         window.ctrl = {
             setView: (view) => {
                 window.appState.view = view;
-                // Reset cart when going to customer view
-                if(view === 'customer') { window.appState.cart = []; window.appState.customerName = ''; }
+                if(view === 'customer') { 
+                    window.appState.cart = []; 
+                    window.appState.customerName = ''; 
+                    window.appState.isCartOpen = false;
+                }
                 render();
             },
             
-            // --- Customer Menu Controls ---
+            // เปิด/ปิด Modal ตะกร้า
+            toggleCart: () => {
+                window.appState.isCartOpen = !window.appState.isCartOpen;
+                render();
+            },
+            
             updateCart: (itemId, delta) => {
                 const item = MENU_ITEMS.find(i => i.id === itemId);
                 let cart = window.appState.cart;
@@ -164,6 +174,21 @@
                 } else if (delta > 0) {
                     cart.push({ ...item, quantity: 1 });
                 }
+                
+                // หากลบของจนตะกร้าว่าง ให้ปิดหน้าต่าง Popup อัตโนมัติ (เฉพาะมือถือ)
+                if (cart.length === 0 && window.appState.isCartOpen) {
+                    window.appState.isCartOpen = false;
+                }
+                
+                render();
+            },
+
+            // ลบเมนูออกจากตะกร้าทั้งหมด
+            removeItem: (itemId) => {
+                window.appState.cart = window.appState.cart.filter(item => item.id !== itemId);
+                if (window.appState.cart.length === 0 && window.appState.isCartOpen) {
+                    window.appState.isCartOpen = false;
+                }
                 render();
             },
             
@@ -174,6 +199,7 @@
                 if (cart.length === 0 || !user || window.appState.isOrdering) return;
                 
                 window.appState.isOrdering = true;
+                window.appState.isCartOpen = false; // ปิด Modal ตอนกดสั่ง
                 render();
 
                 const totalAmount = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
@@ -187,7 +213,6 @@
                         createdAt: serverTimestamp(),
                     });
                     
-                    // Show success screen temporarily
                     document.getElementById('app').innerHTML = `
                         <div class="flex flex-col h-screen items-center justify-center bg-orange-50 p-6 text-center fade-in">
                             <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl mb-8">
@@ -211,7 +236,6 @@
                 }
             },
 
-            // --- Kitchen Controls ---
             completeOrder: async (orderId) => {
                 if (!window.appState.user) return;
                 try {
@@ -224,7 +248,6 @@
                 }
             },
 
-            // --- Admin Controls ---
             setAdminFilter: (filter) => {
                 window.appState.adminFilter = filter;
                 render();
@@ -254,7 +277,7 @@
         };
 
         // ==========================================
-        // RENDER ENGINE (Vanilla JS Strings)
+        // RENDER ENGINE
         // ==========================================
         const renderBrand = (sizeStr) => `<div class="font-black tracking-tighter ${sizeStr}">AFTER<span class="text-orange-500">WORK</span></div>`;
 
@@ -262,13 +285,26 @@
             const appDiv = document.getElementById('app');
             const { view } = window.appState;
             
-            clearInterval(window.appState.kitchenTimerInterval); // Clear timer to prevent duplicates
+            clearInterval(window.appState.kitchenTimerInterval);
+
+            // เก็บตำแหน่ง Scroll ก่อนที่จะ Render หน้าใหม่ (เพื่อไม่ให้หน้าต่างเด้งไปบนสุดตอนกดสั่ง)
+            let menuScrollPos = 0;
+            const scrollContainer = document.getElementById('menu-scroll-container');
+            if (scrollContainer && view === 'customer') {
+                menuScrollPos = scrollContainer.scrollTop;
+            }
 
             if (view === 'home') appDiv.innerHTML = renderHome();
-            else if (view === 'customer') appDiv.innerHTML = renderCustomer();
+            else if (view === 'customer') {
+                appDiv.innerHTML = renderCustomer();
+                // คืนค่าตำแหน่ง Scroll ให้กลับมาจุดเดิมหลังจาก Render เสร็จ
+                const newScrollContainer = document.getElementById('menu-scroll-container');
+                if (newScrollContainer) {
+                    newScrollContainer.scrollTop = menuScrollPos;
+                }
+            }
             else if (view === 'kitchen') {
                 appDiv.innerHTML = renderKitchen();
-                // Start Kitchen Clock loop
                 window.appState.kitchenTimerInterval = setInterval(() => {
                     const timers = document.querySelectorAll('.kitchen-timer');
                     timers.forEach(el => {
@@ -278,7 +314,7 @@
                             const m = String(Math.floor(diffSecs / 60)).padStart(2, '0');
                             const s = String(diffSecs % 60).padStart(2, '0');
                             el.innerHTML = `<i class="fas fa-clock mr-1"></i> ${m}:${s}`;
-                            if(diffSecs > 600) { // 10 mins late
+                            if(diffSecs > 600) { 
                                 el.classList.remove('text-orange-400');
                                 el.classList.add('text-red-500', 'animate-pulse');
                             }
@@ -293,12 +329,10 @@
         function renderHome() {
             return `
             <div class="flex flex-col h-screen items-center justify-center bg-[#f8f9fa] p-6 relative overflow-hidden fade-in">
-                <!-- Admin Button Top Right -->
-                <button onclick="window.ctrl.setView('admin')" class="absolute top-6 right-6 bg-white/80 backdrop-blur shadow-md px-4 py-2 rounded-full text-gray-700 font-bold hover:bg-gray-100 flex items-center transition">
+                <button onclick="window.ctrl.setView('admin')" class="absolute top-6 right-6 bg-white/80 backdrop-blur shadow-md px-4 py-2 rounded-full text-gray-700 font-bold hover:bg-gray-100 flex items-center transition z-20">
                     <i class="fas fa-chart-line mr-2 text-orange-500"></i> สรุปบัญชี / Admin
                 </button>
 
-                <!-- Deco -->
                 <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-orange-200 rounded-full mix-blend-multiply blur-3xl opacity-50"></div>
                 <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-yellow-200 rounded-full mix-blend-multiply blur-3xl opacity-50"></div>
 
@@ -325,11 +359,10 @@
 
         // --- View: CUSTOMER MENU ---
         function renderCustomer() {
-            const { cart, customerName, isOrdering } = window.appState;
+            const { cart, customerName, isOrdering, isCartOpen } = window.appState;
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-            // Group Menu
             const categories = [...new Set(MENU_ITEMS.map(i => i.category))];
             let menuHTML = '';
 
@@ -342,25 +375,27 @@
                     const cartItem = cart.find(c => c.id === item.id);
                     const qty = cartItem ? cartItem.quantity : 0;
                     
+                    // ปรับแต่งให้คลิกทั้งกล่องเพื่อเพิ่มเมนูได้
                     menuHTML += `
-                    <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border-2 ${qty > 0 ? 'border-orange-500 ring-4 ring-orange-500/10' : 'border-transparent'} flex flex-col transition-all duration-300">
-                        <div class="relative h-48 bg-gray-100">
+                    <div onclick="window.ctrl.updateCart('${item.id}', 1)" class="cursor-pointer bg-white rounded-[2rem] overflow-hidden shadow-sm border-2 ${qty > 0 ? 'border-orange-500 ring-4 ring-orange-500/10' : 'border-transparent hover:border-gray-200'} flex flex-col transition-all duration-300 hover:-translate-y-1">
+                        <div class="relative h-48 bg-gray-100 pointer-events-none">
                             <img src="${item.image}" class="w-full h-full object-cover" />
                             ${qty > 0 ? `<div class="absolute top-3 right-3 bg-orange-500 text-white w-10 h-10 flex items-center justify-center rounded-full font-bold shadow-lg text-lg">${qty}</div>` : ''}
                         </div>
                         <div class="p-5 flex-1 flex flex-col">
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">${item.name}</h3>
-                            <p class="text-sm text-gray-500 mb-4 line-clamp-2">${item.price} บาท</p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2 pointer-events-none">${item.name}</h3>
+                            <p class="text-sm text-gray-500 mb-4 line-clamp-2 pointer-events-none">${item.price} บาท</p>
                             <div class="mt-auto flex items-center justify-between pt-2">
-                                <span class="text-2xl font-black text-orange-600">${item.price} ฿</span>
+                                <span class="text-2xl font-black text-orange-600 pointer-events-none">${item.price} ฿</span>
                                 ${qty > 0 ? `
-                                <div class="flex items-center space-x-1 bg-gray-50 rounded-full p-1 border border-gray-100">
+                                <!-- ใส่ onclick stopPropagation เพื่อไม่ให้คลิกปุ่มบวกลบ แล้วไปทริกเกอร์เพิ่มสินค้าซ้ำซ้อน -->
+                                <div class="flex items-center space-x-1 bg-gray-50 rounded-full p-1 border border-gray-100" onclick="event.stopPropagation()">
                                     <button onclick="window.ctrl.updateCart('${item.id}', -1)" class="w-10 h-10 rounded-full bg-white shadow-sm text-gray-600 flex items-center justify-center text-xl hover:bg-gray-100"><i class="fas fa-minus text-sm"></i></button>
                                     <span class="text-xl font-bold w-8 text-center text-gray-800">${qty}</span>
                                     <button onclick="window.ctrl.updateCart('${item.id}', 1)" class="w-10 h-10 rounded-full bg-orange-500 shadow-sm text-white flex items-center justify-center text-xl hover:bg-orange-600"><i class="fas fa-plus text-sm"></i></button>
                                 </div>
                                 ` : `
-                                <button onclick="window.ctrl.updateCart('${item.id}', 1)" class="px-6 py-2.5 rounded-full bg-orange-50 text-orange-600 font-bold hover:bg-orange-100 transition-all">เพิ่ม</button>
+                                <button class="px-6 py-2.5 rounded-full bg-orange-50 text-orange-600 font-bold hover:bg-orange-100 transition-all pointer-events-none">เพิ่ม</button>
                                 `}
                             </div>
                         </div>
@@ -369,23 +404,70 @@
                 menuHTML += `</div></div>`;
             });
 
-            // Cart Items HTML
+            // สร้าง HTML ของรายการในตะกร้า พร้อมปุ่มลบเมนูออก
             let cartItemsHTML = cart.length === 0 
                 ? `<div class="text-center text-gray-400 py-12 flex flex-col items-center"><i class="fas fa-shopping-basket text-5xl mb-4 text-gray-200"></i><p>ยังไม่ได้เลือกเมนูความอร่อย</p></div>`
                 : cart.map(item => `
                     <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                        <div class="flex items-start">
-                            <span class="font-bold text-orange-500 mr-3 text-lg bg-orange-100 w-8 h-8 flex items-center justify-center rounded-lg">${item.quantity}</span>
+                        <div class="flex items-start flex-1 pr-2">
+                            <span class="font-bold text-orange-500 mr-3 text-lg bg-orange-100 w-8 h-8 flex items-center justify-center rounded-lg shrink-0">${item.quantity}</span>
                             <div class="flex flex-col">
-                                <span class="font-bold text-gray-800 text-lg">${item.name}</span>
+                                <span class="font-bold text-gray-800 text-lg leading-tight mb-1">${item.name}</span>
                                 <span class="text-sm text-gray-500">${item.price} ฿ / ที่</span>
                             </div>
                         </div>
-                        <span class="font-black text-gray-900 text-lg">${item.price * item.quantity} ฿</span>
+                        <div class="flex items-center space-x-3 shrink-0">
+                            <span class="font-black text-gray-900 text-lg">${item.price * item.quantity} ฿</span>
+                            <!-- ปุ่มลบรายการ -->
+                            <button onclick="window.ctrl.removeItem('${item.id}')" class="w-9 h-9 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 rounded-full transition-colors active:scale-95" title="ลบเมนูนี้">
+                                <i class="fas fa-trash-alt text-sm"></i>
+                            </button>
+                        </div>
                     </div>`).join('');
 
+            // ส่วนสรุปตะกร้าและปุ่มยืนยัน
+            const cartContentWrapperHTML = `
+                <div class="flex-1 overflow-y-auto mb-6 pr-2 space-y-4 hide-scrollbar">
+                    ${cartItemsHTML}
+                </div>
+                <div class="bg-gray-50 p-5 rounded-3xl border border-gray-100 mb-6 shrink-0">
+                    <div class="flex justify-between items-center text-3xl font-black text-gray-900">
+                        <span>ยอดรวม</span>
+                        <span class="text-orange-600">${totalAmount} <span class="text-xl text-gray-500 font-bold">฿</span></span>
+                    </div>
+                </div>
+                <button onclick="window.ctrl.submitOrder()" ${cart.length === 0 || isOrdering ? 'disabled' : ''} class="w-full shrink-0 py-5 rounded-[1.5rem] text-2xl font-bold text-white transition-all shadow-xl flex justify-center items-center ${cart.length === 0 ? 'bg-gray-300' : 'bg-gradient-to-r from-orange-500 to-orange-600 active:scale-95'}">
+                    ${isOrdering ? '<i class="fas fa-spinner fa-spin mr-3"></i> กำลังส่ง...' : 'ยืนยันออเดอร์'}
+                </button>
+            `;
+
             return `
-            <div class="flex flex-col h-screen bg-[#f4f6f8] fade-in">
+            <div class="flex flex-col h-screen bg-[#f4f6f8] fade-in relative">
+                
+                <!-- Floating Cart Button (แสดงเฉพาะบนจอเล็ก) -->
+                <button onclick="window.ctrl.toggleCart()" class="md:hidden fixed bottom-6 right-6 bg-gray-900 text-white w-16 h-16 rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.3)] flex items-center justify-center z-40 hover:scale-105 active:scale-95 transition-all">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    ${totalItems > 0 ? `<span class="absolute -top-2 -right-2 bg-orange-500 text-white text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full border-4 border-gray-900 shadow-sm">${totalItems}</span>` : ''}
+                </button>
+
+                <!-- Mobile Cart Popup Modal -->
+                <div class="${isCartOpen ? 'flex' : 'hidden'} md:hidden fixed inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex-col justify-end transition-opacity duration-300">
+                    <!-- พื้นที่ว่างกดเพื่อปิด Modal -->
+                    <div class="flex-1" onclick="window.ctrl.toggleCart()"></div>
+                    
+                    <!-- ส่วนล่าง Modal -->
+                    <div class="bg-white rounded-t-[2.5rem] w-full max-h-[85vh] flex flex-col p-6 pb-8 shadow-2xl animate-slide-up">
+                        <div class="flex justify-between items-center mb-6 shrink-0">
+                            <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                                <i class="fas fa-shopping-cart text-orange-500 mr-3"></i> ตะกร้าของฉัน
+                                ${totalItems > 0 ? `<span class="ml-3 bg-orange-100 text-orange-600 text-sm py-1 px-3 rounded-full">${totalItems}</span>` : ''}
+                            </h2>
+                            <button onclick="window.ctrl.toggleCart()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors flex items-center justify-center"><i class="fas fa-times text-xl"></i></button>
+                        </div>
+                        ${cartContentWrapperHTML}
+                    </div>
+                </div>
+
                 <!-- Header -->
                 <header class="glass-panel shadow-sm p-4 flex items-center justify-between z-20 sticky top-0 border-b border-gray-100">
                     <button onclick="window.ctrl.setView('home')" class="w-12 h-12 flex items-center justify-center text-gray-600 bg-gray-100 rounded-full transition-colors"><i class="fas fa-arrow-left"></i></button>
@@ -394,8 +476,8 @@
                 </header>
 
                 <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
-                    <!-- Left: Menu -->
-                    <div class="flex-1 overflow-y-auto p-4 md:p-8 pb-36 hide-scrollbar">
+                    <!-- Left: Menu Container (เพิ่ม ID สำหรับคุมตำแหน่ง Scroll ไม่ให้เด้งขึ้นบนสุด) -->
+                    <div id="menu-scroll-container" class="flex-1 overflow-y-auto p-4 md:p-8 pb-32 md:pb-8 hide-scrollbar">
                         <!-- Customer Name Box -->
                         <div class="bg-white p-2 rounded-2xl shadow-sm mb-8 flex items-center border border-gray-100">
                             <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center ml-2">
@@ -406,25 +488,14 @@
                         ${menuHTML}
                     </div>
 
-                    <!-- Right: Cart -->
-                    <div class="w-full md:w-[400px] bg-white md:border-l border-gray-100 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] z-30 flex flex-col fixed bottom-0 left-0 md:relative h-auto md:h-full rounded-t-[2.5rem] md:rounded-none">
-                        <div class="p-6 md:p-8 flex-1 flex flex-col max-h-[50vh] md:max-h-full">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center justify-between">
+                    <!-- Right: Cart Sidebar (แสดงเฉพาะบนจอใหญ่ Desktop/Tablet แนวนอน) -->
+                    <div class="hidden md:flex w-[400px] bg-white border-l border-gray-100 shadow-[-10px_0_30px_rgba(0,0,0,0.02)] z-30 flex-col relative h-full">
+                        <div class="p-8 flex-1 flex flex-col h-full">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center justify-between shrink-0">
                                 <span><i class="fas fa-shopping-cart mr-3 text-orange-500"></i> ตะกร้าของฉัน</span>
                                 ${totalItems > 0 ? `<span class="bg-orange-500 text-white text-sm py-1 px-3 rounded-full">${totalItems}</span>` : ''}
                             </h2>
-                            <div class="flex-1 overflow-y-auto mb-6 pr-2 space-y-4 hide-scrollbar">
-                                ${cartItemsHTML}
-                            </div>
-                            <div class="bg-gray-50 p-5 rounded-3xl border border-gray-100 mb-6">
-                                <div class="flex justify-between items-center text-3xl font-black text-gray-900">
-                                    <span>ยอดรวม</span>
-                                    <span class="text-orange-600">${totalAmount} <span class="text-xl text-gray-500 font-bold">฿</span></span>
-                                </div>
-                            </div>
-                            <button onclick="window.ctrl.submitOrder()" ${cart.length === 0 || isOrdering ? 'disabled' : ''} class="w-full py-5 rounded-[1.5rem] text-2xl font-bold text-white transition-all shadow-xl flex justify-center items-center ${cart.length === 0 ? 'bg-gray-300' : 'bg-gradient-to-r from-orange-500 to-orange-600 active:scale-95'}">
-                                ${isOrdering ? '<i class="fas fa-spinner fa-spin mr-3"></i> กำลังส่ง...' : 'ยืนยันออเดอร์'}
-                            </button>
+                            ${cartContentWrapperHTML}
                         </div>
                     </div>
                 </div>
@@ -433,7 +504,6 @@
 
         // --- View: KITCHEN ---
         function renderKitchen() {
-            // Memory sort & filter for active orders (Oldest first)
             const activeOrders = window.appState.orders
                 .filter(o => o.status === 'active')
                 .sort((a, b) => a.timeMs - b.timeMs);
@@ -491,11 +561,10 @@
             </div>`;
         }
 
-        // --- View: ADMIN DASHBOARD (In-memory Filtering) ---
+        // --- View: ADMIN DASHBOARD ---
         function renderAdmin() {
             const { orders, expenses, adminFilter } = window.appState;
             
-            // --- Helper: Date Filtering ---
             const now = new Date();
             const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
             const startOfWeek = startOfToday - (now.getDay() * 24 * 60 * 60 * 1000);
@@ -510,15 +579,12 @@
                 return true;
             };
 
-            // Calculate Totals based on filter
             let totalIncome = 0;
-            let itemSales = {}; // For Best Sellers
+            let itemSales = {};
 
-            // Filter Orders (completed & active counts for income)
             orders.forEach(o => {
                 if(isWithinFilter(o.timeMs)) {
                     totalIncome += o.total;
-                    // Count items
                     o.items.forEach(item => {
                         if(!itemSales[item.name]) itemSales[item.name] = { count: 0, revenue: 0 };
                         itemSales[item.name].count += item.quantity;
@@ -527,7 +593,6 @@
                 }
             });
 
-            // Filter Expenses
             let totalExpenses = 0;
             const filteredExp = [];
             expenses.forEach(e => {
@@ -539,14 +604,12 @@
 
             const netProfit = totalIncome - totalExpenses;
 
-            // Sort Best Sellers
             const bestSellersArr = Object.keys(itemSales).map(name => ({
                 name, 
                 count: itemSales[name].count, 
                 revenue: itemSales[name].revenue
-            })).sort((a,b) => b.count - a.count).slice(0, 5); // Top 5
+            })).sort((a,b) => b.count - a.count).slice(0, 5);
 
-            // Generate HTML for Best Sellers
             const bestSellersHTML = bestSellersArr.length === 0 ? '<p class="text-gray-400 py-4 text-center">ไม่มีข้อมูลยอดขายในช่วงนี้</p>' : 
                 bestSellersArr.map((item, idx) => `
                 <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 mb-2">
@@ -561,7 +624,6 @@
                 </div>
             `).join('');
 
-            // Generate HTML for Expenses List
             const expListHTML = filteredExp.length === 0 ? '<p class="text-gray-400 py-4 text-center">ไม่มีบันทึกรายจ่าย</p>' :
                 filteredExp.sort((a,b) => b.timeMs - a.timeMs).slice(0, 10).map(e => `
                 <div class="flex justify-between border-b border-gray-100 py-3 last:border-0">
@@ -579,7 +641,6 @@
                     <button onclick="window.ctrl.setView('home')" class="w-12 h-12 flex items-center justify-center text-gray-600 bg-gray-100 rounded-full mr-4"><i class="fas fa-arrow-left"></i></button>
                     <h1 class="text-2xl font-bold flex-1 text-gray-800"><i class="fas fa-chart-line text-orange-500 mr-2"></i> สรุปบัญชีและร้านค้า</h1>
                     
-                    <!-- Date Filter Dropdown -->
                     <select onchange="window.ctrl.setAdminFilter(this.value)" class="bg-gray-100 border border-gray-200 text-gray-700 rounded-xl px-4 py-2 font-bold outline-none">
                         <option value="today" ${adminFilter === 'today' ? 'selected' : ''}>วันนี้</option>
                         <option value="week" ${adminFilter === 'week' ? 'selected' : ''}>สัปดาห์นี้</option>
@@ -589,8 +650,6 @@
                 </header>
 
                 <div class="p-6 max-w-6xl mx-auto w-full">
-                    
-                    <!-- Top Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                             <p class="text-gray-500 font-bold mb-2">ยอดขายสุทธิ (Income)</p>
@@ -607,8 +666,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        
-                        <!-- Left Col: Sales & Best Sellers -->
                         <div class="space-y-8">
                             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                 <h3 class="text-xl font-bold text-gray-800 mb-6 border-b pb-3"><i class="fas fa-crown text-yellow-500 mr-2"></i> 5 อันดับเมนูขายดี</h3>
@@ -616,9 +673,7 @@
                             </div>
                         </div>
 
-                        <!-- Right Col: Expenses Form & List -->
                         <div class="space-y-8">
-                            <!-- Add Expense Form -->
                             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                 <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-3"><i class="fas fa-file-invoice-dollar text-red-500 mr-2"></i> บันทึกรายจ่าย (ต้นทุน, ค่าไฟ ฯลฯ)</h3>
                                 <form onsubmit="window.ctrl.addExpense(event)" class="flex flex-col space-y-4">
@@ -634,7 +689,6 @@
                                 </form>
                             </div>
 
-                            <!-- Expenses History -->
                             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                                 <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-3">ประวัติรายจ่ายล่าสุด (ในช่วงที่เลือก)</h3>
                                 <div class="max-h-[300px] overflow-y-auto pr-2">
@@ -642,7 +696,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>`;

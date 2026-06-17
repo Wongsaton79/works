@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Health Dashboard: Ban Dan Lan Hoi (V.33)</title>
+    <title>Executive Health Dashboard: Ban Dan Lan Hoi V.Final</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -254,9 +254,10 @@
                                 <small class="text-muted">กรุณาเลือกตัวชี้วัดหรือช่วงเวลาอื่น</small>
                             </div>
                             <div id="special-kpi-container" class="special-container">
-                                <div class="kpi-box shadow-sm">
-                                    <div class="kpi-big-number" id="special-kpi-val">0</div>
-                                    <div class="kpi-text-label" id="special-kpi-desc">อัตราการตาย</div>
+                                <div class="kpi-box shadow-sm" style="padding: 3.5rem 2rem;">
+                                    <div id="special-kpi-desc" style="font-size: clamp(1.8rem, 3.2vw, 2.4rem); font-weight: 700; color: #047857; line-height: 1.5; max-width: 92%;">
+                                        กำลังโหลดข้อมูลตัวชี้วัด...
+                                    </div>
                                 </div>
                             </div>
                             <div id="special-text-container" class="special-container">
@@ -299,7 +300,7 @@
 
 <script>
     // ** URL API (อย่าลืมเปลี่ยนเป็น Web App URL ใหม่ของคุณหลังการ Deploy) **
-    const API_URL = "https://script.google.com/macros/s/AKfycbxhPzFoWgcrbGVtLqVtahnm4PbnCLnRTokvE_g4FU_vPBhT6jfvgziArzBhJ4m_ydd7/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzzKg2E_dmaWIjG_n96m_bYaSpMJOQX0AEk67zgMwArN4urRSTlSvi-8THAi_6Pwwly/exec"; 
 
     let mapData = [], goalsConfig = {}, indicatorsList = {}, allChartData = {};
     let selectedUnitId = 'total', selectedKpiKey = null, currentPeriod = '6m'; 
@@ -508,7 +509,8 @@
             const isSpecialText = (firstItem && firstItem.type === 'text');
             const isComparison = (firstItem && firstItem.type === 'year_comparison');
             const isAttributeList = (firstItem && firstItem.type === 'attribute_list'); 
-            const isAccidentStats = (firstItem && firstItem.type === 'accident_cluster'); 
+            const isAccidentStats = (firstItem && firstItem.type === 'accident_cluster');
+            const isYearlyTargetResult = (firstItem && firstItem.type === 'yearly_target_result'); 
 
             // DOM Elements
             const canvasChart = document.getElementById('comparisonChart');
@@ -529,10 +531,21 @@
             document.getElementById('target-value-container').style.display = 'block';
             chartIcon.className = 'bi bi-bar-chart-fill';
 
-            let goalVal = (currentPeriod === '6m') ? goalInfo.goal_6m : goalInfo.goal_10m;
-            let goalText = (currentPeriod === '6m') ? goalInfo.goal_6m_text : goalInfo.goal_10m_text;
-            if ((!goalText || goalText === "-") && goalVal !== null) { goalText = goalVal + "%"; }
-            document.getElementById('target-value').textContent = goalText;
+            // --- จัดการเกณฑ์เป้าหมาย ---
+            let goalVal = null;
+            let goalText = "-";
+            
+            if (goalInfo) {
+                goalVal = (currentPeriod === '6m') ? goalInfo.goal_6m : goalInfo.goal_10m;
+                goalText = (currentPeriod === '6m') ? goalInfo.goal_6m_text : goalInfo.goal_10m_text;
+                
+                // ถ้าระบบไม่ได้ให้ค่า Text มา แต่มีตัวเลข ให้เติม % ต่อท้าย
+                if ((!goalText || goalText === "-") && goalVal !== null) { 
+                    goalText = goalVal + "%"; 
+                }
+            }
+            
+            document.getElementById('target-value').textContent = goalText || "-";
 
             // --- LAYOUT LOGIC ---
             if (isAttributeList || isSpecialText) {
@@ -545,9 +558,11 @@
             if (isSpecialKPI) {
                 canvasChart.style.display = 'none'; gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12';
                 chartSubtitle.style.display = 'none'; kpiContainer.style.display = 'block';
-                document.getElementById('special-kpi-val').textContent = firstItem.value;
-                const parts = firstItem.text.split('='); document.getElementById('special-kpi-desc').textContent = parts[0] || "KPI";
-                document.getElementById('chart-title').innerHTML = 'ตัวชี้วัดความสำเร็จ'; chartIcon.className = 'bi bi-star-fill';
+    
+                // ✅ 1. สั่งเอาข้อความเต็มจาก Google Sheet (เช่น "อัตราส่วนการตายมารดาไทย... มีค่าเท่ากับ 0") 
+                // มาแสดงผลที่กล่องตัวอักษรขนาดใหญ่โดยตรงทันที
+                document.getElementById('special-kpi-desc').textContent = firstItem.text;
+    
                 updateExecutiveStats([], null); updateSmartTable(dataSet, null);
             } else if (isSpecialText) {
                 canvasChart.style.display = 'none'; textContainer.style.display = 'block';
@@ -568,34 +583,39 @@
                 updateExecutiveTemplateTable(dataSet); 
                 updateExecutiveStats([], null); 
             } else if (isAccidentStats) {
-                // [V.33] แก้ไขบั๊กการดึงข้อมูล Sheet 8 โดยสกัดข้อมูลจาก Cluster มาเป็นรายเดือน 
+                // [V.33 Generic Cluster] รองรับข้อมูลรายเดือนแบบกลุ่มสำหรับทุกหัวข้อ
                 gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12'; chartSubtitle.style.display = 'none';
-                document.getElementById('chart-title').innerHTML = '8. อัตราการเสียชีวิตและบาดเจ็บจากอุบัติเหตุทางถนนใน กลุ่มเด็กและเยาวชน (ช่วงวัย 1-18 ปี) ลดลง'; 
-                chartIcon.className = 'bi bi-cone-striped';
-                document.getElementById('target-value').textContent = "รายเดือน";
+                
+                // ดึงชื่อหัวข้อมาแสดง (ถ้าไม่ได้ตั้งชื่อแผนภูมิไว้ ให้ใช้ชื่อตัวชี้วัดแทน)
+                let title = goalInfo.custom_title || goalInfo.name; 
+                document.getElementById('chart-title').innerHTML = title; 
+                chartIcon.className = 'bi bi-bar-chart-steps'; 
+                // ✅ แก้ไขเป็น goalText เพื่อให้แสดงเป้าหมายจริงจาก Google Sheet (เช่น < ร้อยละ 7)
+                document.getElementById('target-value').textContent = goalText;
 
-                let processedData = [];
-                if (firstItem.months && firstItem.series && firstItem.series.length > 0) {
-                    let totalSeries = firstItem.series.find(s => s.label.includes("ทั้งหมด")) || firstItem.series[0];
-                    let targetSeries = firstItem.series.find(s => s.label.includes("1-18") || s.label.includes("เด็ก") || s.label.includes("บาดเจ็บ")) || firstItem.series[1] || firstItem.series[0];
-
-                    firstItem.months.forEach((m, idx) => {
-                        let t = parseFloat(totalSeries.data[idx]) || 0;
-                        let r = parseFloat(targetSeries.data[idx]) || 0;
-                        processedData.push({
-                            name: m,
-                            targetVal: t,
-                            resultVal: r,
-                            pct: t > 0 ? (r / t) * 100 : 0
-                        });
-                    });
+                // ส่งข้อมูล Months และ Series ทั้งหมดที่มีเข้าฟังก์ชันโดยตรง
+                if (firstItem.months && firstItem.series) {
+                    renderMonthlyAccidentChart(firstItem.months, firstItem.series);
+                    updateMonthlyAccidentTable(firstItem.months, firstItem.series);
+                    updateMonthlyAccidentStats(firstItem.months, firstItem.series);
                 }
 
-                renderMonthlyAccidentChart(processedData);
-                updateMonthlyAccidentTable(processedData);
-                updateMonthlyAccidentStats(processedData);
+            } else if (isYearlyTargetResult) {
+                // [V.33] รูปแบบเปรียบเทียบเป้าหมายและผลงานรายปี (เช่น Sheet 23)
+                gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12'; chartSubtitle.style.display = 'none';
+                
+                let title = goalInfo.custom_title || goalInfo.name; 
+                document.getElementById('chart-title').innerHTML = title; 
+                chartIcon.className = 'bi bi-bar-chart-line-fill'; 
+                document.getElementById('target-value').textContent = "รายปีงบประมาณ";
 
-            } else {
+                // เรียกใช้ฟังก์ชันวาดกราฟและตาราง (ที่เรากำลังจะสร้างด้านล่าง)
+                renderYearlyTargetResultChart(dataSet);
+                updateYearlyTargetResultTable(dataSet);
+                updateExecutiveStats([], null); // เคลียร์การ์ดสถิติด้านบนให้ว่าง หรืออาจจะปรับแต่งให้โชว์ข้อมูลได้ในอนาคต
+
+            }
+            else {
                 let unitData = dataSet.find(d => d.id === selectedUnitId);
                 if (!unitData && selectedUnitId === 'total') {
                      unitData = { id: 'total', name: 'ภาพรวมอำเภอ', value: 0 }; 
@@ -636,36 +656,74 @@
     Chart.defaults.plugins.tooltip.padding = 12; Chart.defaults.plugins.tooltip.cornerRadius = 8; Chart.defaults.plugins.tooltip.displayColors = false;
 
     // === กราฟและตารางอุบัติเหตุรายเดือน ===
-    function renderMonthlyAccidentChart(data) {
+    function renderMonthlyAccidentChart(months, series) {
         const ctx = document.getElementById('comparisonChart').getContext('2d');
         const overlay = document.getElementById('no-data-overlay');
         if (barChart) { barChart.destroy(); barChart = null; }
-        if (!data || data.length === 0) { overlay.classList.remove('d-none'); return; }
+        if (!series || series.length === 0) { overlay.classList.remove('d-none'); return; }
         overlay.classList.add('d-none');
 
+        // เตรียมชุดสีสำหรับแท่งกราฟและเส้นกราฟแยกตามดัชนี
+        const barColors = ['#e2e8f0', '#f59e0b', '#10b981', '#06b6d4', '#6366f1'];
+        const lineColors = ['#f43f5e', '#10b981', '#06b6d4', '#8b5cf6'];
+        let datasets = [];
+
+        // 1. วนลูปสร้างแท่งกราฟ (Bar) ให้ครบทุกกลุ่มที่มีใน Sheet
+        series.forEach((s, sIdx) => {
+            datasets.push({
+                type: 'bar',
+                label: s.label,
+                data: s.data,
+                backgroundColor: barColors[sIdx] || '#cbd5e1',
+                borderRadius: 4,
+                yAxisID: 'y',
+                datalabels: {
+                    align: 'center',
+                    anchor: 'center',
+                    color: sIdx === 0 ? '#1e293b' : '#fff', // แท่งแรกตัวหนังสือดำ แท่งย่อยตัวหนังสือขาว
+                    font: { weight: 'bold', size: 10 }
+                }
+            });
+        });
+
+        // 2. วนลูปสร้างเส้นร้อยละ (Line) ของกลุ่มย่อยทุกกลุ่ม เทียบกับกลุ่มรวมกลุ่มแรก
+        const totalData = series[0].data;
+        for (let i = 1; i < series.length; i++) {
+            const subSeries = series[i];
+            const pctData = subSeries.data.map((val, mIdx) => {
+                const total = parseFloat(totalData[mIdx]) || 0;
+                return total > 0 ? parseFloat(((val / total) * 100).toFixed(2)) : 0;
+            });
+
+            datasets.unshift({ // ใช้ unshift ดึงให้เส้นอยู่เลเยอร์บนสุดของกราฟ
+                type: 'line',
+                label: `ร้อยละ ${subSeries.label} (%)`,
+                data: pctData,
+                borderColor: lineColors[i-1] || '#f43f5e',
+                backgroundColor: lineColors[i-1] || '#f43f5e',
+                borderWidth: 2,
+                marker: { radius: 4 },
+                yAxisID: 'y1',
+                datalabels: {
+                    align: 'top',
+                    anchor: 'end',
+                    formatter: (val) => val + '%',
+                    color: lineColors[i-1] || '#f43f5e',
+                    font: { weight: 'bold' }
+                }
+            });
+        }
+
+        // 3. สั่งวาดกราฟคอมโพสิต
         barChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: data.map(d => d.name),
-                datasets: [
-                    { type: 'line', label: 'ร้อยละต่อผู้ป่วยทั้งหมด (%)', data: data.map(d => d.pct.toFixed(2)), borderColor: '#f43f5e', backgroundColor: '#f43f5e', borderWidth: 2, marker: { radius: 4 }, yAxisID: 'y1', datalabels: { align: 'top', anchor: 'end', formatter: (val) => val + '%', color: '#f43f5e', font: { weight: 'bold' } } },
-                    { type: 'bar', 
-                    label: 'ผู้ป่วยทั้งหมด (คน)', 
-                    data: data.map(d => d.targetVal), 
-                    backgroundColor: '#e2e8f0', 
-                    borderRadius: 4, 
-                    yAxisID: 'y', 
-                    datalabels: { 
-                        align: 'center', 
-                        anchor: 'center', 
-                        color: '#1e293b', // ใช้สีเทาเข้มเกือบดำให้ดูสวยงาม (หรือใช้ '#000' สำหรับสีดำสนิท)
-                        font: { weight: 'bold', size: 10 } 
-                    } },
-                    { type: 'bar', label: 'กลุ่มอายุ 1-18 ปี (คน)', data: data.map(d => d.resultVal), backgroundColor: '#f59e0b', borderRadius: 4, yAxisID: 'y', datalabels: { align: 'center', anchor: 'center', color: '#fff', font: { weight: 'bold', size: 10 } } }
-                ]
+                labels: months.filter(m => m !== "กลุ่ม" && m !== "ลำดับ" && m !== ""),
+                datasets: datasets
             },
             options: {
-                responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
                 scales: {
                     x: { grid: { display: false }, ticks: { font: {weight: '600'} } },
                     y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'จำนวน (คน)' }, grid: { color: '#f1f5f9' } },
@@ -676,45 +734,185 @@
             plugins: [ChartDataLabels]
         });
     }
+    // === ฟังก์ชันกราฟและตารางสำหรับรูปแบบ รายปี (เป้าหมาย vs ผลงาน) ===
+    function renderYearlyTargetResultChart(data) {
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        const overlay = document.getElementById('no-data-overlay');
+        if (barChart) { barChart.destroy(); barChart = null; }
+        if (!data || data.length === 0) { overlay.classList.remove('d-none'); return; }
+        overlay.classList.add('d-none');
 
-    function updateMonthlyAccidentTable(data) {
+        barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => "ปี " + d.year),
+                datasets: [
+                    {
+                        type: 'line', // เส้นกราฟสำหรับแสดงเป้าหมาย
+                        label: 'เป้าหมาย (%)',
+                        data: data.map(d => d.target),
+                        borderColor: '#f43f5e', // สีแดง
+                        backgroundColor: '#f43f5e',
+                        borderWidth: 2,
+                        borderDash: [5, 5], // ทำให้เป็นเส้นประ
+                        marker: { radius: 5 },
+                        yAxisID: 'y',
+                        datalabels: { align: 'top', anchor: 'end', formatter: (val) => val + '%', color: '#f43f5e', font: { weight: 'bold' } }
+                    },
+                    {
+                        type: 'bar', // แท่งกราฟสำหรับแสดงผลงาน
+                        label: 'ผลงานที่ทำได้ (%)',
+                        data: data.map(d => d.result),
+                        // ถ้าผลงานมากกว่าหรือเท่ากับเป้าหมายให้เป็นสีเขียว ถ้าต่ำกว่าเป็นสีส้ม
+                        backgroundColor: data.map(d => d.result >= d.target ? '#10b981' : '#f59e0b'), 
+                        borderRadius: 6,
+                        barPercentage: 0.5,
+                        yAxisID: 'y',
+                        datalabels: { align: 'center', anchor: 'center', color: '#fff', formatter: (val) => val + '%', font: { weight: 'bold', size: 12 } }
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: {weight: '600'} } },
+                    y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' }, title: { display: true, text: 'ร้อยละ (%)' } }
+                },
+                plugins: { legend: { display: true, position: 'top' } }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    function updateYearlyTargetResultTable(data) {
         if (dataTable) { dataTable.destroy(); dataTable = null; }
-        const tbody = document.getElementById('table-body'); const tfoot = document.getElementById('table-foot');
+        const tbody = document.getElementById('table-body');
+        
+        // สร้างหัวตาราง
         document.getElementById('table-header').rows[0].innerHTML = `
-            <th style="width: 10%" class="text-center">ลำดับ</th><th style="width: 30%">เดือน</th>
-            <th style="width: 20%" class="text-center text-secondary">ผู้ป่วยทั้งหมด (คน)</th>
-            <th style="width: 20%" class="text-center text-warning">กลุ่มอายุ 1-18 ปี (คน)</th>
-            <th style="width: 20%" class="text-center text-danger">ร้อยละ (%)</th>
+            <th style="width: 10%" class="text-center">ลำดับ</th>
+            <th style="width: 30%">ปีงบประมาณ</th>
+            <th style="width: 20%" class="text-center text-danger">เป้าหมาย (%)</th>
+            <th style="width: 20%" class="text-center text-primary">ผลงาน (%)</th>
+            <th style="width: 20%" class="text-center">สถานะ</th>
         `;
+        tbody.innerHTML = ''; document.getElementById('table-foot').innerHTML = '';
+
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            const isPass = item.result >= item.target;
+            const badge = isPass ? '<span class="badge bg-success rounded-pill px-3">ผ่านเกณฑ์</span>' : '<span class="badge bg-danger rounded-pill px-3">ไม่ผ่าน</span>';
+
+            tr.innerHTML = `
+                <td class="text-center text-muted fw-bold">${index + 1}</td>
+                <td class="fw-medium">ปีงบประมาณ ${item.year}</td>
+                <td class="text-center fw-bold text-danger bg-danger-subtle border-start">${item.target.toFixed(2)}%</td>
+                <td class="text-center fw-bold ${isPass ? 'text-success bg-success-subtle' : 'text-warning'} border-end">${item.result.toFixed(2)}%</td>
+                <td class="text-center">${badge}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        dataTable = $('#detail-table').DataTable({ paging: false, searching: false, info: false, ordering: false });
+    }
+
+    function updateMonthlyAccidentTable(months, series) {
+        if (dataTable) { dataTable.destroy(); dataTable = null; }
+        const tbody = document.getElementById('table-body'); 
+        const tfoot = document.getElementById('table-foot');
+        
+        // 1. วนลูปสร้างหัวตาราง (Header) ตามกลุ่มข้อมูลที่มีจริง
+        let headerHtml = `<th style="width: 8%" class="text-center">ลำดับ</th><th style="width: 15%">เดือน</th>`;
+        series.forEach(s => {
+            headerHtml += `<th class="text-center">${s.label}</th>`;
+        });
+        for (let i = 1; i < series.length; i++) {
+            headerHtml += `<th class="text-center text-danger">ร้อยละ ${series[i].label} (%)</th>`;
+        }
+        document.getElementById('table-header').rows[0].innerHTML = headerHtml;
         tbody.innerHTML = ''; tfoot.innerHTML = '';
 
-        let sumTarget = 0; let sumResult = 0;
-        data.forEach((item, index) => {
-            sumTarget += item.targetVal; sumResult += item.resultVal;
+        // เตรียม Array สำหรับเก็บผลรวมสะสม YTD ของแต่ละคอลัมน์ข้อมูล
+        let totalsSum = new Array(series.length).fill(0);
+
+        // 2. แตกข้อมูลรายเดือนลงตาราง
+        months.forEach((m, mIdx) => {
+            if (m === "กลุ่ม" || m === "ลำดับ" || m === "") return;
+
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td class="text-center text-muted fw-bold">${index + 1}</td><td class="fw-medium">${item.name}</td><td class="text-center bg-light fw-bold text-secondary border-start">${item.targetVal.toLocaleString()}</td><td class="text-center bg-light fw-bold text-warning">${item.resultVal.toLocaleString()}</td><td class="text-center bg-light border-end"><span class="badge bg-danger rounded-pill px-3">${item.pct.toFixed(2)}%</span></td>`;
+            let rowHtml = `<td class="text-center text-muted fw-bold">${tbody.children.length + 1}</td><td class="fw-medium">${m}</td>`;
+            
+            // ใส่จำนวนตัวเลขของแต่ละกลุ่มลงช่องช่องตาราง
+            series.forEach((s, sIdx) => {
+                let val = parseFloat(s.data[mIdx]) || 0;
+                totalsSum[sIdx] += val; // บวกสมทบยอดสะสม
+                rowHtml += `<td class="text-center bg-light fw-bold">${val.toLocaleString()}</td>`;
+            });
+
+            // คำนวณร้อยละของกลุ่มย่อยแต่ละกลุ่มในเดือนนั้นๆ
+            const totalVal = parseFloat(series[0].data[mIdx]) || 0;
+            for (let i = 1; i < series.length; i++) {
+                const subVal = parseFloat(series[i].data[mIdx]) || 0;
+                const pct = totalVal > 0 ? (subVal / totalVal) * 100 : 0;
+                rowHtml += `<td class="text-center"><span class="badge bg-danger rounded-pill px-2">${pct.toFixed(2)}%</span></td>`;
+            }
+
+            tr.innerHTML = rowHtml;
             tbody.appendChild(tr);
         });
 
-        let totalPct = sumTarget > 0 ? (sumResult / sumTarget) * 100 : 0;
+        // 3. สร้างแถวสรุปท้ายตาราง (tfoot) คำนวณภาพรวมสะสมทั้งปี (YTD)
         const trFoot = document.createElement('tr');
-        trFoot.innerHTML = `<td class="text-center border-0">-</td><td class="border-0 fw-bold">รวมสะสม (YTD)</td><td class="text-center text-secondary fw-bold border-start border-0">${sumTarget.toLocaleString()}</td><td class="text-center text-warning fw-bold border-0">${sumResult.toLocaleString()}</td><td class="text-center border-end border-0"><span class="badge bg-danger rounded-pill px-3 fs-6">${totalPct.toFixed(2)}%</span></td>`;
+        let footHtml = `<td class="text-center border-0">-</td><td class="border-0 fw-bold">รวมสะสม (YTD)</td>`;
+        
+        totalsSum.forEach(sum => {
+            footHtml += `<td class="text-center fw-bold border-0 bg-light">${sum.toLocaleString()}</td>`;
+        });
+
+        const totalSumAll = totalsSum[0] || 0;
+        for (let i = 1; i < series.length; i++) {
+            const subSum = totalsSum[i] || 0;
+            const totalPct = totalSumAll > 0 ? (subSum / totalSumAll) * 100 : 0;
+            footHtml += `<td class="text-center border-0"><span class="badge bg-dark rounded-pill px-2 fs-6">${totalPct.toFixed(2)}%</span></td>`;
+        }
+        
+        trFoot.innerHTML = footHtml;
         tfoot.appendChild(trFoot);
         dataTable = $('#detail-table').DataTable({ paging: false, searching: false, info: false, ordering: false });
     }
 
-    function updateMonthlyAccidentStats(data) {
-        if (!data || data.length === 0) return;
-        let sumTarget = data.reduce((sum, d) => sum + d.targetVal, 0);
-        let sumResult = data.reduce((sum, d) => sum + d.resultVal, 0);
-        let overallPct = sumTarget > 0 ? (sumResult / sumTarget) * 100 : 0;
+    function updateMonthlyAccidentStats(months, series) {
+        if (!series || series.length === 0) return;
+        let totalSum = series[0].data.reduce((a, b) => (parseFloat(a) || 0) + (parseFloat(b) || 0), 0);
+        let targetSum = series[1] ? series[1].data.reduce((a, b) => (parseFloat(a) || 0) + (parseFloat(b) || 0), 0) : 0;
+        let overallPct = totalSum > 0 ? (targetSum / totalSum) * 100 : 0;
 
-        document.getElementById('stat-gap').textContent = sumTarget.toLocaleString(); document.getElementById('stat-gap').className = "exec-value text-secondary"; document.getElementById('gap-arrow').className = "bi bi-people-fill ms-2 text-secondary fs-4"; document.getElementById('stat-gap-desc').textContent = "ผู้ป่วยทั้งหมดสะสม (คน)"; document.querySelector('.card-gap .exec-label').textContent = "ผู้ป่วยอุบัติเหตุรวม"; document.querySelector('.card-gap .exec-icon-box').className = "exec-icon-box bg-secondary bg-opacity-10 text-secondary"; document.querySelector('.card-gap .exec-icon-box i').className = "bi bi-hospital";
-        document.getElementById('stat-pass').textContent = sumResult.toLocaleString(); document.getElementById('stat-pass').className = "exec-value text-warning"; document.getElementById('stat-pass-sub').innerHTML = `คิดเป็น ${overallPct.toFixed(2)}% ของทั้งหมด`; document.querySelector('.card-pass .exec-label').textContent = "กลุ่ม 1-18 ปี (คน)"; document.querySelector('.card-pass .exec-icon-box').className = "exec-icon-box bg-warning bg-opacity-10 text-warning"; document.querySelector('.card-pass .exec-icon-box i').className = "bi bi-person-bounding-box";
-        document.getElementById('stat-max-list').innerHTML = `<div class="d-flex flex-column justify-content-center h-100"><div class="exec-value text-danger" style="font-size: 2.2rem;">${overallPct.toFixed(2)}%</div><div class="text-muted fw-bold mt-1" style="font-size: 0.85rem;">อัตราสะสม 1-18 ปี (YTD)</div></div>`; document.querySelector('.card-max .exec-label').textContent = "ภาพรวมร้อยละสะสม"; document.querySelector('.card-max .exec-icon-box').className = "exec-icon-box bg-danger bg-opacity-10 text-danger"; document.querySelector('.card-max .exec-icon-box i').className = "bi bi-percent";
+        // Card 1: กลุ่มข้อมูลรวมแถวแรก
+        document.getElementById('stat-gap').textContent = totalSum.toLocaleString();
+        document.getElementById('stat-gap').className = "exec-value text-secondary";
+        document.getElementById('stat-gap-desc').textContent = "รวมทั้งหมดสะสม";
+        document.querySelector('.card-gap .exec-label').textContent = series[0].label;
+
+        // Card 2: กลุ่มข้อมูลเป้าหมายแถวที่สอง
+        document.getElementById('stat-pass').textContent = targetSum.toLocaleString();
+        document.getElementById('stat-pass').className = "exec-value text-warning";
+        document.getElementById('stat-pass-sub').innerHTML = `คิดเป็น ${overallPct.toFixed(2)}% ของทั้งหมด`;
+        document.querySelector('.card-pass .exec-label').textContent = series[1] ? series[1].label : "กลุ่มเป้าหมาย";
+
+        // Card 3: ภาพรวมร้อยละสะสม YTD
+        document.getElementById('stat-max-list').innerHTML = `<div class="d-flex flex-column justify-content-center h-100"><div class="exec-value text-danger" style="font-size: 2.2rem;">${overallPct.toFixed(2)}%</div><div class="text-muted fw-bold mt-1" style="font-size: 0.85rem;">ร้อยละสะสมสะท้อนตัวชี้วัด</div></div>`;
         
-        let maxPctData = [...data].sort((a,b) => b.pct - a.pct)[0];
-        document.getElementById('stat-min').textContent = maxPctData.pct.toFixed(2) + "%"; document.getElementById('stat-min').className = "exec-value text-danger"; document.getElementById('stat-min-name').innerHTML = `เดือน <span class="text-dark">${maxPctData.name}</span>`; document.querySelector('.card-min .exec-label').textContent = "อัตราสูงสุดรายเดือน"; document.querySelector('.card-min .exec-icon-box').className = "exec-icon-box bg-danger text-white"; document.querySelector('.card-min .exec-icon-box i').className = "bi bi-graph-up-arrow";
+        // Card 4: ค้นหาเดือนที่มีอัตราส่วนสูงสุด (กลุ่ม 2 เทียบกลุ่ม 1)
+        let maxPct = 0; let maxMonth = "-";
+        months.forEach((m, idx) => {
+            if (m === "กลุ่ม" || m === "ลำดับ" || m === "") return;
+            let t = parseFloat(series[0].data[idx]) || 0;
+            let r = series[1] ? (parseFloat(series[1].data[idx]) || 0) : 0;
+            let p = t > 0 ? (r / t) * 100 : 0;
+            if (p > maxPct) { maxPct = p; maxMonth = m; }
+        });
+        document.getElementById('stat-min').textContent = maxPct.toFixed(2) + "%";
+        document.getElementById('stat-min-name').innerHTML = `สูงสุดในเดือน <span class="text-dark">${maxMonth}</span>`;
     }
 
     // === Standard Template Tables & Charts (ย่อขนาดโค้ด) ===

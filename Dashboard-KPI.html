@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Health Dashboard: Ban Dan Lan Hoi V.Final</title>
+    <title>Executive Health Dashboard: Ban Dan Lan Hoi (V.Final)</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -299,7 +299,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-    // ** URL API (อย่าลืมเปลี่ยนเป็น Web App URL ใหม่ของคุณหลังการ Deploy) **
+    // ✅ จุดที่ 1: เพิ่มฟังก์ชันตรวจจับทิศทางตัวชี้วัด (นำมาไว้ตรงนี้เพื่อให้ฟังก์ชันอื่นเรียกใช้ได้)
+    function isLessIsBetter(goalText) {
+        if (!goalText) return false;
+        const txt = String(goalText);
+        return txt.includes("<") || txt.includes("น้อยกว่า") || txt.includes("ไม่เกิน") || txt.includes("ลดลง");
+    }
+
+    // ** URL API **
     const API_URL = "https://script.google.com/macros/s/AKfycbzzKg2E_dmaWIjG_n96m_bYaSpMJOQX0AEk67zgMwArN4urRSTlSvi-8THAi_6Pwwly/exec"; 
 
     let mapData = [], goalsConfig = {}, indicatorsList = {}, allChartData = {};
@@ -512,7 +519,6 @@
             const isAccidentStats = (firstItem && firstItem.type === 'accident_cluster');
             const isYearlyTargetResult = (firstItem && firstItem.type === 'yearly_target_result'); 
 
-            // DOM Elements
             const canvasChart = document.getElementById('comparisonChart');
             const kpiContainer = document.getElementById('special-kpi-container');
             const textContainer = document.getElementById('special-text-container');
@@ -522,7 +528,6 @@
             const chartSubtitle = document.getElementById('chart-subtitle');
             const chartIcon = document.getElementById('chart-icon');
 
-            // Reset defaults
             kpiContainer.style.display = 'none'; textContainer.style.display = 'none'; canvasChart.style.display = 'block';
             gaugeCard.style.display = 'block'; chartCard.className = 'col-lg-9'; 
             tableCard.style.display = 'block'; chartSubtitle.style.display = 'block';
@@ -531,15 +536,12 @@
             document.getElementById('target-value-container').style.display = 'block';
             chartIcon.className = 'bi bi-bar-chart-fill';
 
-            // --- จัดการเกณฑ์เป้าหมาย ---
             let goalVal = null;
             let goalText = "-";
             
             if (goalInfo) {
                 goalVal = (currentPeriod === '6m') ? goalInfo.goal_6m : goalInfo.goal_10m;
                 goalText = (currentPeriod === '6m') ? goalInfo.goal_6m_text : goalInfo.goal_10m_text;
-                
-                // ถ้าระบบไม่ได้ให้ค่า Text มา แต่มีตัวเลข ให้เติม % ต่อท้าย
                 if ((!goalText || goalText === "-") && goalVal !== null) { 
                     goalText = goalVal + "%"; 
                 }
@@ -547,7 +549,6 @@
             
             document.getElementById('target-value').textContent = goalText || "-";
 
-            // --- LAYOUT LOGIC ---
             if (isAttributeList || isSpecialText) {
                 gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12'; chartSubtitle.style.display = 'none';
                 document.getElementById('exec-stat-row').style.display = 'none'; 
@@ -558,11 +559,7 @@
             if (isSpecialKPI) {
                 canvasChart.style.display = 'none'; gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12';
                 chartSubtitle.style.display = 'none'; kpiContainer.style.display = 'block';
-    
-                // ✅ 1. สั่งเอาข้อความเต็มจาก Google Sheet (เช่น "อัตราส่วนการตายมารดาไทย... มีค่าเท่ากับ 0") 
-                // มาแสดงผลที่กล่องตัวอักษรขนาดใหญ่โดยตรงทันที
                 document.getElementById('special-kpi-desc').textContent = firstItem.text;
-    
                 updateExecutiveStats([], null); updateSmartTable(dataSet, null);
             } else if (isSpecialText) {
                 canvasChart.style.display = 'none'; textContainer.style.display = 'block';
@@ -583,37 +580,26 @@
                 updateExecutiveTemplateTable(dataSet); 
                 updateExecutiveStats([], null); 
             } else if (isAccidentStats) {
-                // [V.33 Generic Cluster] รองรับข้อมูลรายเดือนแบบกลุ่มสำหรับทุกหัวข้อ
                 gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12'; chartSubtitle.style.display = 'none';
-                
-                // ดึงชื่อหัวข้อมาแสดง (ถ้าไม่ได้ตั้งชื่อแผนภูมิไว้ ให้ใช้ชื่อตัวชี้วัดแทน)
                 let title = goalInfo.custom_title || goalInfo.name; 
                 document.getElementById('chart-title').innerHTML = title; 
                 chartIcon.className = 'bi bi-bar-chart-steps'; 
-                // ✅ แก้ไขเป็น goalText เพื่อให้แสดงเป้าหมายจริงจาก Google Sheet (เช่น < ร้อยละ 7)
                 document.getElementById('target-value').textContent = goalText;
 
-                // ส่งข้อมูล Months และ Series ทั้งหมดที่มีเข้าฟังก์ชันโดยตรง
                 if (firstItem.months && firstItem.series) {
                     renderMonthlyAccidentChart(firstItem.months, firstItem.series);
                     updateMonthlyAccidentTable(firstItem.months, firstItem.series);
                     updateMonthlyAccidentStats(firstItem.months, firstItem.series);
                 }
-
             } else if (isYearlyTargetResult) {
-                // [V.33] รูปแบบเปรียบเทียบเป้าหมายและผลงานรายปี (เช่น Sheet 23)
                 gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12'; chartSubtitle.style.display = 'none';
-                
                 let title = goalInfo.custom_title || goalInfo.name; 
                 document.getElementById('chart-title').innerHTML = title; 
                 chartIcon.className = 'bi bi-bar-chart-line-fill'; 
                 document.getElementById('target-value').textContent = "รายปีงบประมาณ";
-
-                // เรียกใช้ฟังก์ชันวาดกราฟและตาราง (ที่เรากำลังจะสร้างด้านล่าง)
                 renderYearlyTargetResultChart(dataSet);
                 updateYearlyTargetResultTable(dataSet);
-                updateExecutiveStats([], null); // เคลียร์การ์ดสถิติด้านบนให้ว่าง หรืออาจจะปรับแต่งให้โชว์ข้อมูลได้ในอนาคต
-
+                updateExecutiveStats([], null); 
             }
             else {
                 let unitData = dataSet.find(d => d.id === selectedUnitId);
@@ -638,10 +624,21 @@
                 animateValue("unit-value", 0, val, 600);
                 
                 const passStatus = document.getElementById('pass-status');
-                if(goalVal) {
-                     if(val >= goalVal) { passStatus.className = "mt-4 badge badge-soft-success rounded-pill px-4 py-2 fw-bold fs-6 mx-auto shadow-sm"; passStatus.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ผ่านเกณฑ์เป้าหมาย'; } 
-                     else { passStatus.className = "mt-4 badge badge-soft-danger rounded-pill px-4 py-2 fw-bold fs-6 mx-auto shadow-sm"; passStatus.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> ต่ำกว่าเกณฑ์'; }
-                } else { passStatus.className = "mt-4 badge badge-soft-warning text-secondary border-0 rounded-pill px-4 py-2 fw-bold fs-6 mx-auto shadow-sm"; passStatus.innerHTML = "ไม่มีเกณฑ์เป้าหมายกำหนด"; }
+                if(goalVal !== null) {
+                    const isPassed = isLessIsBetter(goalText) ? (val <= goalVal) : (val >= goalVal);
+
+                     if(isPassed) { 
+                         passStatus.className = "mt-4 badge badge-soft-success rounded-pill px-4 py-2 fw-bold fs-6 mx-auto shadow-sm"; 
+                         passStatus.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ผ่านเกณฑ์เป้าหมาย'; 
+                     } else { 
+                         const alertText = isLessIsBetter(goalText) ? 'เกินเกณฑ์กำหนด' : 'ต่ำกว่าเกณฑ์';
+                         passStatus.className = "mt-4 badge badge-soft-danger rounded-pill px-4 py-2 fw-bold fs-6 mx-auto shadow-sm"; 
+                         passStatus.innerHTML = `<i class="bi bi-exclamation-circle-fill me-1"></i> ${alertText}`; 
+                     }
+                } else { 
+                    passStatus.className = "mt-4 badge badge-soft-warning text-secondary border-0 rounded-pill px-4 py-2 fw-bold fs-6 mx-auto shadow-sm"; 
+                    passStatus.innerHTML = "ไม่มีเกณฑ์เป้าหมายกำหนด"; 
+                }
 
                 updateExecutiveStats(dataSet, goalVal);
                 updateSmartTable(dataSet, goalVal); renderGauge(val, goalVal); renderBarChart(dataSet, goalVal, showData);
@@ -663,12 +660,10 @@
         if (!series || series.length === 0) { overlay.classList.remove('d-none'); return; }
         overlay.classList.add('d-none');
 
-        // เตรียมชุดสีสำหรับแท่งกราฟและเส้นกราฟแยกตามดัชนี
         const barColors = ['#e2e8f0', '#f59e0b', '#10b981', '#06b6d4', '#6366f1'];
         const lineColors = ['#f43f5e', '#10b981', '#06b6d4', '#8b5cf6'];
         let datasets = [];
 
-        // 1. วนลูปสร้างแท่งกราฟ (Bar) ให้ครบทุกกลุ่มที่มีใน Sheet
         series.forEach((s, sIdx) => {
             datasets.push({
                 type: 'bar',
@@ -678,15 +673,13 @@
                 borderRadius: 4,
                 yAxisID: 'y',
                 datalabels: {
-                    align: 'center',
-                    anchor: 'center',
-                    color: sIdx === 0 ? '#1e293b' : '#fff', // แท่งแรกตัวหนังสือดำ แท่งย่อยตัวหนังสือขาว
+                    align: 'center', anchor: 'center',
+                    color: sIdx === 0 ? '#1e293b' : '#fff',
                     font: { weight: 'bold', size: 10 }
                 }
             });
         });
 
-        // 2. วนลูปสร้างเส้นร้อยละ (Line) ของกลุ่มย่อยทุกกลุ่ม เทียบกับกลุ่มรวมกลุ่มแรก
         const totalData = series[0].data;
         for (let i = 1; i < series.length; i++) {
             const subSeries = series[i];
@@ -695,7 +688,7 @@
                 return total > 0 ? parseFloat(((val / total) * 100).toFixed(2)) : 0;
             });
 
-            datasets.unshift({ // ใช้ unshift ดึงให้เส้นอยู่เลเยอร์บนสุดของกราฟ
+            datasets.unshift({
                 type: 'line',
                 label: `ร้อยละ ${subSeries.label} (%)`,
                 data: pctData,
@@ -704,17 +697,10 @@
                 borderWidth: 2,
                 marker: { radius: 4 },
                 yAxisID: 'y1',
-                datalabels: {
-                    align: 'top',
-                    anchor: 'end',
-                    formatter: (val) => val + '%',
-                    color: lineColors[i-1] || '#f43f5e',
-                    font: { weight: 'bold' }
-                }
+                datalabels: { align: 'top', anchor: 'end', formatter: (val) => val + '%', color: lineColors[i-1] || '#f43f5e', font: { weight: 'bold' } }
             });
         }
 
-        // 3. สั่งวาดกราฟคอมโพสิต
         barChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -734,7 +720,7 @@
             plugins: [ChartDataLabels]
         });
     }
-    // === ฟังก์ชันกราฟและตารางสำหรับรูปแบบ รายปี (เป้าหมาย vs ผลงาน) ===
+    
     function renderYearlyTargetResultChart(data) {
         const ctx = document.getElementById('comparisonChart').getContext('2d');
         const overlay = document.getElementById('no-data-overlay');
@@ -748,22 +734,21 @@
                 labels: data.map(d => "ปี " + d.year),
                 datasets: [
                     {
-                        type: 'line', // เส้นกราฟสำหรับแสดงเป้าหมาย
+                        type: 'line', 
                         label: 'เป้าหมาย (%)',
                         data: data.map(d => d.target),
-                        borderColor: '#f43f5e', // สีแดง
+                        borderColor: '#f43f5e', 
                         backgroundColor: '#f43f5e',
                         borderWidth: 2,
-                        borderDash: [5, 5], // ทำให้เป็นเส้นประ
+                        borderDash: [5, 5], 
                         marker: { radius: 5 },
                         yAxisID: 'y',
                         datalabels: { align: 'top', anchor: 'end', formatter: (val) => val + '%', color: '#f43f5e', font: { weight: 'bold' } }
                     },
                     {
-                        type: 'bar', // แท่งกราฟสำหรับแสดงผลงาน
+                        type: 'bar', 
                         label: 'ผลงานที่ทำได้ (%)',
                         data: data.map(d => d.result),
-                        // ถ้าผลงานมากกว่าหรือเท่ากับเป้าหมายให้เป็นสีเขียว ถ้าต่ำกว่าเป็นสีส้ม
                         backgroundColor: data.map(d => d.result >= d.target ? '#10b981' : '#f59e0b'), 
                         borderRadius: 6,
                         barPercentage: 0.5,
@@ -788,7 +773,6 @@
         if (dataTable) { dataTable.destroy(); dataTable = null; }
         const tbody = document.getElementById('table-body');
         
-        // สร้างหัวตาราง
         document.getElementById('table-header').rows[0].innerHTML = `
             <th style="width: 10%" class="text-center">ลำดับ</th>
             <th style="width: 30%">ปีงบประมาณ</th>
@@ -821,63 +805,44 @@
         const tbody = document.getElementById('table-body'); 
         const tfoot = document.getElementById('table-foot');
         
-        // 1. วนลูปสร้างหัวตาราง (Header) ตามกลุ่มข้อมูลที่มีจริง
         let headerHtml = `<th style="width: 8%" class="text-center">ลำดับ</th><th style="width: 15%">เดือน</th>`;
-        series.forEach(s => {
-            headerHtml += `<th class="text-center">${s.label}</th>`;
-        });
-        for (let i = 1; i < series.length; i++) {
-            headerHtml += `<th class="text-center text-danger">ร้อยละ ${series[i].label} (%)</th>`;
-        }
+        series.forEach(s => { headerHtml += `<th class="text-center">${s.label}</th>`; });
+        for (let i = 1; i < series.length; i++) { headerHtml += `<th class="text-center text-danger">ร้อยละ ${series[i].label} (%)</th>`; }
         document.getElementById('table-header').rows[0].innerHTML = headerHtml;
         tbody.innerHTML = ''; tfoot.innerHTML = '';
 
-        // เตรียม Array สำหรับเก็บผลรวมสะสม YTD ของแต่ละคอลัมน์ข้อมูล
         let totalsSum = new Array(series.length).fill(0);
 
-        // 2. แตกข้อมูลรายเดือนลงตาราง
         months.forEach((m, mIdx) => {
             if (m === "กลุ่ม" || m === "ลำดับ" || m === "") return;
-
             const tr = document.createElement('tr');
             let rowHtml = `<td class="text-center text-muted fw-bold">${tbody.children.length + 1}</td><td class="fw-medium">${m}</td>`;
             
-            // ใส่จำนวนตัวเลขของแต่ละกลุ่มลงช่องช่องตาราง
             series.forEach((s, sIdx) => {
                 let val = parseFloat(s.data[mIdx]) || 0;
-                totalsSum[sIdx] += val; // บวกสมทบยอดสะสม
+                totalsSum[sIdx] += val;
                 rowHtml += `<td class="text-center bg-light fw-bold">${val.toLocaleString()}</td>`;
             });
 
-            // คำนวณร้อยละของกลุ่มย่อยแต่ละกลุ่มในเดือนนั้นๆ
             const totalVal = parseFloat(series[0].data[mIdx]) || 0;
             for (let i = 1; i < series.length; i++) {
                 const subVal = parseFloat(series[i].data[mIdx]) || 0;
                 const pct = totalVal > 0 ? (subVal / totalVal) * 100 : 0;
                 rowHtml += `<td class="text-center"><span class="badge bg-danger rounded-pill px-2">${pct.toFixed(2)}%</span></td>`;
             }
-
-            tr.innerHTML = rowHtml;
-            tbody.appendChild(tr);
+            tr.innerHTML = rowHtml; tbody.appendChild(tr);
         });
 
-        // 3. สร้างแถวสรุปท้ายตาราง (tfoot) คำนวณภาพรวมสะสมทั้งปี (YTD)
         const trFoot = document.createElement('tr');
         let footHtml = `<td class="text-center border-0">-</td><td class="border-0 fw-bold">รวมสะสม (YTD)</td>`;
-        
-        totalsSum.forEach(sum => {
-            footHtml += `<td class="text-center fw-bold border-0 bg-light">${sum.toLocaleString()}</td>`;
-        });
-
+        totalsSum.forEach(sum => { footHtml += `<td class="text-center fw-bold border-0 bg-light">${sum.toLocaleString()}</td>`; });
         const totalSumAll = totalsSum[0] || 0;
         for (let i = 1; i < series.length; i++) {
             const subSum = totalsSum[i] || 0;
             const totalPct = totalSumAll > 0 ? (subSum / totalSumAll) * 100 : 0;
             footHtml += `<td class="text-center border-0"><span class="badge bg-dark rounded-pill px-2 fs-6">${totalPct.toFixed(2)}%</span></td>`;
         }
-        
-        trFoot.innerHTML = footHtml;
-        tfoot.appendChild(trFoot);
+        trFoot.innerHTML = footHtml; tfoot.appendChild(trFoot);
         dataTable = $('#detail-table').DataTable({ paging: false, searching: false, info: false, ordering: false });
     }
 
@@ -887,22 +852,10 @@
         let targetSum = series[1] ? series[1].data.reduce((a, b) => (parseFloat(a) || 0) + (parseFloat(b) || 0), 0) : 0;
         let overallPct = totalSum > 0 ? (targetSum / totalSum) * 100 : 0;
 
-        // Card 1: กลุ่มข้อมูลรวมแถวแรก
-        document.getElementById('stat-gap').textContent = totalSum.toLocaleString();
-        document.getElementById('stat-gap').className = "exec-value text-secondary";
-        document.getElementById('stat-gap-desc').textContent = "รวมทั้งหมดสะสม";
-        document.querySelector('.card-gap .exec-label').textContent = series[0].label;
-
-        // Card 2: กลุ่มข้อมูลเป้าหมายแถวที่สอง
-        document.getElementById('stat-pass').textContent = targetSum.toLocaleString();
-        document.getElementById('stat-pass').className = "exec-value text-warning";
-        document.getElementById('stat-pass-sub').innerHTML = `คิดเป็น ${overallPct.toFixed(2)}% ของทั้งหมด`;
-        document.querySelector('.card-pass .exec-label').textContent = series[1] ? series[1].label : "กลุ่มเป้าหมาย";
-
-        // Card 3: ภาพรวมร้อยละสะสม YTD
+        document.getElementById('stat-gap').textContent = totalSum.toLocaleString(); document.getElementById('stat-gap').className = "exec-value text-secondary"; document.getElementById('stat-gap-desc').textContent = "รวมทั้งหมดสะสม"; document.querySelector('.card-gap .exec-label').textContent = series[0].label;
+        document.getElementById('stat-pass').textContent = targetSum.toLocaleString(); document.getElementById('stat-pass').className = "exec-value text-warning"; document.getElementById('stat-pass-sub').innerHTML = `คิดเป็น ${overallPct.toFixed(2)}% ของทั้งหมด`; document.querySelector('.card-pass .exec-label').textContent = series[1] ? series[1].label : "กลุ่มเป้าหมาย";
         document.getElementById('stat-max-list').innerHTML = `<div class="d-flex flex-column justify-content-center h-100"><div class="exec-value text-danger" style="font-size: 2.2rem;">${overallPct.toFixed(2)}%</div><div class="text-muted fw-bold mt-1" style="font-size: 0.85rem;">ร้อยละสะสมสะท้อนตัวชี้วัด</div></div>`;
         
-        // Card 4: ค้นหาเดือนที่มีอัตราส่วนสูงสุด (กลุ่ม 2 เทียบกลุ่ม 1)
         let maxPct = 0; let maxMonth = "-";
         months.forEach((m, idx) => {
             if (m === "กลุ่ม" || m === "ลำดับ" || m === "") return;
@@ -911,11 +864,9 @@
             let p = t > 0 ? (r / t) * 100 : 0;
             if (p > maxPct) { maxPct = p; maxMonth = m; }
         });
-        document.getElementById('stat-min').textContent = maxPct.toFixed(2) + "%";
-        document.getElementById('stat-min-name').innerHTML = `สูงสุดในเดือน <span class="text-dark">${maxMonth}</span>`;
+        document.getElementById('stat-min').textContent = maxPct.toFixed(2) + "%"; document.getElementById('stat-min-name').innerHTML = `สูงสุดในเดือน <span class="text-dark">${maxMonth}</span>`;
     }
 
-    // === Standard Template Tables & Charts (ย่อขนาดโค้ด) ===
     function updateExecutiveTemplateTable(data) { if (dataTable) { dataTable.destroy(); dataTable = null; } const tbody = document.getElementById('table-body'); const tfoot = document.getElementById('table-foot'); document.getElementById('table-header').rows[0].innerHTML = '<th style="width: 5%" class="text-center">#</th><th style="width: 25%">หน่วยบริการ</th><th style="width: 25%" class="text-center">ระดับการประเมิน (ผลลัพธ์)</th><th style="width: 20%" class="text-center">ระยะเวลาการรับรอง</th><th style="width: 25%">รายละเอียด / ข้อเสนอแนะ</th>'; tbody.innerHTML = ''; tfoot.innerHTML = ''; data.filter(d => d.id !== 'total').forEach((item, index) => { const tr = document.createElement('tr'); let resultText = item.attr1 || '-'; let badgeColor = "badge-soft-warning"; let icon = '<i class="bi bi-dash-circle me-1"></i>'; if(resultText.includes("ดีมาก") || resultText.includes("ดีเยี่ยม") || resultText.includes("ผ่าน") || resultText.includes("ทอง")) { badgeColor = "badge-soft-success"; icon = '<i class="bi bi-check-circle-fill me-1"></i>'; } else if(resultText.includes("มาตรฐาน") || resultText.includes("พื้นฐาน") || resultText.includes("เงิน")) { badgeColor = "badge-soft-primary"; icon = '<i class="bi bi-award-fill me-1"></i>'; } else if(resultText.includes("ไม่ผ่าน") || resultText.includes("หมดอายุ") || resultText.includes("ปรับปรุง")) { badgeColor = "badge-soft-danger"; icon = '<i class="bi bi-x-circle-fill me-1"></i>'; } tr.innerHTML = `<td class="text-center text-muted fw-bold">${index + 1}</td><td class="fw-bold text-dark">${item.name}</td><td class="text-center"><span class="badge ${badgeColor} rounded-pill px-3 py-2 shadow-sm fs-6">${icon} ${resultText}</span></td><td class="text-center"><small class="fw-bold text-muted bg-light px-2 py-1 rounded border">${item.attr2 || '-'}</small></td><td><small class="text-secondary">${item.attr3 || 'ไม่มีข้อเสนอแนะเพิ่มเติม'}</small></td>`; tbody.appendChild(tr); }); dataTable = $('#detail-table').DataTable({ paging: false, searching: true, info: false, language: { search: "", searchPlaceholder: "ค้นหาหน่วยบริการ...", zeroRecords: "ไม่พบข้อมูล" } }); }
     function renderYearComparisonChart(data) { const ctx = document.getElementById('comparisonChart').getContext('2d'); const overlay = document.getElementById('no-data-overlay'); if (barChart) { barChart.destroy(); barChart = null; } overlay.classList.add('d-none'); barChart = new Chart(ctx, { type: 'bar', data: { labels: data.map(d => "ปี " + d.year), datasets: [ { label: 'HDC/จังหวัด(%)', data: data.map(d => d.hdc), backgroundColor: '#4f46e5', borderRadius: 6, barPercentage: 0.6 }, { label: 'Hosxp/อำเภอ(%)', data: data.map(d => d.hosxp), backgroundColor: '#f43f5e', borderRadius: 6, barPercentage: 0.6 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9', drawBorder: false } }, x: { grid: { display: false, drawBorder: false }, ticks: { font: {weight: '600'} } } }, plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }, datalabels: { anchor: 'end', align: 'top', formatter: (val) => val + '%', font: { weight: 'bold' }, color: '#475569' } } }, plugins: [ChartDataLabels] }); }
     function updateComparisonTable(data) { if (dataTable) { dataTable.destroy(); dataTable = null; } const tbody = document.getElementById('table-body'); document.getElementById('table-header').rows[0].innerHTML = '<th style="width: 5%" class="text-center">#</th><th style="width: 25%">ปีงบประมาณ</th><th style="width: 25%" class="text-center text-primary">HDC/จังหวัด</th><th style="width: 25%" class="text-center text-danger">Hosxp/อำเภอ</th><th style="width: 20%">Progress Bar</th>'; tbody.innerHTML = ''; document.getElementById('table-foot').innerHTML = ''; data.forEach((item, index) => { const tr = document.createElement('tr'); tr.innerHTML = `<td class="text-center text-muted fw-bold">${index + 1}</td><td class="fw-medium">ปีงบประมาณ ${item.year}</td><td class="text-center text-primary fw-bold bg-primary-subtle border-start">${item.hdc}%</td><td class="text-center text-danger fw-bold bg-danger-subtle border-end">${item.hosxp}%</td><td><div class="progress progress-slim mb-2" title="HDC"><div class="progress-bar" style="background-color: #4f46e5; width: ${item.hdc}%"></div></div><div class="progress progress-slim" title="Hosxp"><div class="progress-bar" style="background-color: #f43f5e; width: ${item.hosxp}%"></div></div></td>`; tbody.appendChild(tr); }); }
@@ -942,7 +893,13 @@
             }
         } else { maxListContainer.innerHTML = '<div class="exec-value text-muted text-center" style="font-size: 1.5rem;">-</div>'; }
         if(sortedVals[0] && sortedVals[0].value !== undefined) { document.getElementById('stat-min').textContent = sortedVals[sortedVals.length-1].value + "%"; document.getElementById('stat-min-name').textContent = sortedVals[sortedVals.length-1].name; }
-        let passCount = target !== null ? cleanData.filter(d => d.value >= target).length : "-";
+        
+        const goalText = (currentPeriod === '6m') ? goalsConfig[selectedKpiKey]?.goal_6m_text : goalsConfig[selectedKpiKey]?.goal_10m_text;
+        const lessIsBetter = isLessIsBetter(goalText);
+        let passCount = "-";
+        if (target !== null) {
+            passCount = cleanData.filter(d => { return lessIsBetter ? (d.value <= target) : (d.value >= target); }).length;
+        }
         document.getElementById('stat-pass').textContent = passCount + " แห่ง"; document.getElementById('stat-pass-sub').innerHTML = `จากทั้งหมด ${cleanData.length} แห่ง <i class="bi bi-funnel ms-1 text-success"></i>`;
     }
 
@@ -959,7 +916,21 @@
             const tr = document.createElement('tr'); if(item.id === selectedUnitId) tr.classList.add('table-primary');
             let targetNum = (item.target !== undefined && item.target !== null && item.target !== "") ? item.target.toLocaleString() : "-"; let resultNum = (item.result !== undefined && item.result !== null && item.result !== "") ? item.result.toLocaleString() : "-";
             let statusBadge = '<span class="badge bg-light text-muted fw-medium border rounded-pill px-3">N/A</span>'; let progressColor = '#94a3b8'; 
-            if (target !== null) { if (item.value >= target) { statusBadge = '<span class="badge badge-soft-success rounded-pill px-3 shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> ผ่าน</span>'; progressColor = '#10b981'; } else { statusBadge = '<span class="badge badge-soft-danger rounded-pill px-3 shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> ไม่ผ่าน</span>'; progressColor = '#f43f5e'; } }
+            
+            // ✅ จุดที่ 4: แก้ไขสถานะและสีในตารางสรุปผลงาน
+            if (target !== null) { 
+                const goalText = (currentPeriod === '6m') ? goalsConfig[selectedKpiKey]?.goal_6m_text : goalsConfig[selectedKpiKey]?.goal_10m_text;
+                const isPassed = isLessIsBetter(goalText) ? (item.value <= target) : (item.value >= target);
+
+                if (isPassed) { 
+                    statusBadge = '<span class="badge badge-soft-success rounded-pill px-3 shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> ผ่าน</span>'; 
+                    progressColor = '#10b981'; 
+                } else { 
+                    statusBadge = '<span class="badge badge-soft-danger rounded-pill px-3 shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> ไม่ผ่าน</span>'; 
+                    progressColor = '#f43f5e'; 
+                } 
+            }
+            
             tr.innerHTML = `<td class="text-center text-muted fw-bold">${index + 1}</td><td class="fw-medium">${item.name}</td><td class="text-center text-primary fw-bold bg-primary-subtle border-start">${targetNum}</td><td class="text-center text-success fw-bold bg-success-subtle border-end">${resultNum}</td><td class="text-center fw-bold text-dark">${item.value}%</td><td><div class="progress progress-slim mt-1"><div class="progress-bar" style="background-color: ${progressColor}; width: ${Math.min(item.value, 100)}%"></div></div></td><td class="text-center">${statusBadge}</td>`;
             tr.style.cursor = 'pointer'; tr.onclick = () => { selectUnit({id: item.id, name: item.name}); }; tbody.appendChild(tr);
         });
@@ -968,8 +939,50 @@
     }
 
     function animateValue(id, start, end, duration) { if (start === end) { document.getElementById(id).innerHTML = end; return; } const obj = document.getElementById(id); let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); let current = progress * (end - start) + start; obj.innerHTML = (end % 1 === 0) ? Math.floor(current) : current.toFixed(2); if (progress < 1) window.requestAnimationFrame(step); else obj.innerHTML = end; }; window.requestAnimationFrame(step); }
-    function renderGauge(value, target) { const ctx = document.getElementById('gaugeChart').getContext('2d'); if (gaugeChart) gaugeChart.destroy(); const remaining = Math.max(0, 100 - value); let color = target !== null ? (value >= target ? '#10b981' : '#f43f5e') : '#4f46e5'; gaugeChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['ผลงาน', 'ส่วนที่เหลือ'], datasets: [{ data: [value, remaining], backgroundColor: [color, '#f1f5f9'], borderWidth: 0, circumference: 180, rotation: -90, cutout: '78%', borderRadius: [10, 0] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } }); }
-    function renderBarChart(data, targetValue, showData) { const ctx = document.getElementById('comparisonChart').getContext('2d'); const overlay = document.getElementById('no-data-overlay'); if (barChart) { barChart.destroy(); barChart = null; } if (!showData || data.length === 0) { overlay.classList.remove('d-none'); barChart = new Chart(ctx, { type: 'bar', data: {}, options: {plugins:{legend:false}, scales:{x:{display:false}, y:{display:false}}}}); return; } overlay.classList.add('d-none'); const sortedData = [...data].sort((a, b) => { if (a.id === 'total') return -1; if (b.id === 'total') return 1; return b.value - a.value; }); const labels = sortedData.map(d => d.id === 'total' ? 'ภาพรวม' : (d.initial || d.name)); const bgColors = sortedData.map(d => { if (d.id === 'total') return targetValue !== null ? (Number(d.value) >= Number(targetValue) ? '#10b981' : '#f43f5e') : '#4f46e5'; return d.id === selectedUnitId ? '#f59e0b' : '#cbd5e1'; }); const annotations = {}; if (targetValue !== null) { annotations.line1 = { type: 'line', yMin: targetValue, yMax: targetValue, borderColor: '#f43f5e', borderWidth: 2, borderDash: [6, 4], label: { content: `เป้า ${targetValue}%`, display: true, position: 'end', backgroundColor: '#f43f5e', color: 'white', font: {size: 11, weight: 'bold'}, borderRadius: 4, padding: 4 } }; } barChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ data: sortedData.map(d => d.value), backgroundColor: bgColors, borderRadius: 6, barPercentage: 0.5 }] }, options: { responsive: true, maintainAspectRatio: false, onClick: (e, elements) => { if (elements.length > 0) { const clickedData = sortedData[elements[0].index]; selectUnit({id: clickedData.id === 'total' ? 'total' : clickedData.id, name: clickedData.name}); } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9', drawBorder: false } }, x: { grid: { display: false, drawBorder: false }, ticks: { font: {weight: '600'}, autoSkip: false, maxRotation: 45, minRotation: 0 } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { title: (ctx) => sortedData[ctx[0].dataIndex].id === 'total' ? 'ภาพรวม' : (sortedData[ctx[0].dataIndex].initial || sortedData[ctx[0].dataIndex].name), label: (ctx) => ` ผลงาน: ${ctx.parsed.y}%${sortedData[ctx[0].dataIndex].target ? ` (เป้า: ${sortedData[ctx[0].dataIndex].target})` : ''}` } }, datalabels: { anchor: 'end', align: 'top', formatter: (val) => val + '%', font: { family: 'Prompt', weight: 'bold', size: 10 }, color: '#4b5563', offset: -2 }, annotation: { annotations: annotations } } }, plugins: [ChartDataLabels] }); }
+    
+    // ✅ เพิ่มเติม: ทำให้เกจวงกลมฉลาดขึ้น ถ้าน้อยกว่าเป้าสำหรับตัวชี้วัดทิศทางลบ ก็จะขึ้นสีเขียวให้ด้วย
+    function renderGauge(value, target) { 
+        const ctx = document.getElementById('gaugeChart').getContext('2d'); 
+        if (gaugeChart) gaugeChart.destroy(); 
+        const remaining = Math.max(0, 100 - value); 
+        let color = '#4f46e5';
+        
+        if (target !== null) {
+            const goalText = (currentPeriod === '6m') ? goalsConfig[selectedKpiKey]?.goal_6m_text : goalsConfig[selectedKpiKey]?.goal_10m_text;
+            const isPassed = isLessIsBetter(goalText) ? (value <= target) : (value >= target);
+            color = isPassed ? '#10b981' : '#f43f5e';
+        }
+        
+        gaugeChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['ผลงาน', 'ส่วนที่เหลือ'], datasets: [{ data: [value, remaining], backgroundColor: [color, '#f1f5f9'], borderWidth: 0, circumference: 180, rotation: -90, cutout: '78%', borderRadius: [10, 0] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } }); 
+    }
+    
+    function renderBarChart(data, targetValue, showData) { 
+        const ctx = document.getElementById('comparisonChart').getContext('2d'); 
+        const overlay = document.getElementById('no-data-overlay'); 
+        if (barChart) { barChart.destroy(); barChart = null; } 
+        if (!showData || data.length === 0) { overlay.classList.remove('d-none'); barChart = new Chart(ctx, { type: 'bar', data: {}, options: {plugins:{legend:false}, scales:{x:{display:false}, y:{display:false}}}}); return; } 
+        overlay.classList.add('d-none'); 
+        const sortedData = [...data].sort((a, b) => { if (a.id === 'total') return -1; if (b.id === 'total') return 1; return b.value - a.value; }); 
+        const labels = sortedData.map(d => d.id === 'total' ? 'ภาพรวม' : (d.initial || d.name)); 
+        
+        // ✅ จุดที่ 5: แก้ไขแถบสีของแท่งกราฟภาพรวม
+        const goalText = (currentPeriod === '6m') ? goalsConfig[selectedKpiKey]?.goal_6m_text : goalsConfig[selectedKpiKey]?.goal_10m_text;
+        const bgColors = sortedData.map(d => { 
+            if (d.id === 'total') {
+                if (targetValue !== null) {
+                    const isPassed = isLessIsBetter(goalText) ? (Number(d.value) <= Number(targetValue)) : (Number(d.value) >= Number(targetValue));
+                    return isPassed ? '#10b981' : '#f43f5e';
+                }
+                return '#4f46e5';
+            } 
+            return d.id === selectedUnitId ? '#f59e0b' : '#cbd5e1'; 
+        }); 
+        
+        const annotations = {}; 
+        if (targetValue !== null) { annotations.line1 = { type: 'line', yMin: targetValue, yMax: targetValue, borderColor: '#f43f5e', borderWidth: 2, borderDash: [6, 4], label: { content: `เป้า ${targetValue}%`, display: true, position: 'end', backgroundColor: '#f43f5e', color: 'white', font: {size: 11, weight: 'bold'}, borderRadius: 4, padding: 4 } }; } 
+        barChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ data: sortedData.map(d => d.value), backgroundColor: bgColors, borderRadius: 6, barPercentage: 0.5 }] }, options: { responsive: true, maintainAspectRatio: false, onClick: (e, elements) => { if (elements.length > 0) { const clickedData = sortedData[elements[0].index]; selectUnit({id: clickedData.id === 'total' ? 'total' : clickedData.id, name: clickedData.name}); } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9', drawBorder: false } }, x: { grid: { display: false, drawBorder: false }, ticks: { font: {weight: '600'}, autoSkip: false, maxRotation: 45, minRotation: 0 } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { title: (ctx) => sortedData[ctx[0].dataIndex].id === 'total' ? 'ภาพรวม' : (sortedData[ctx[0].dataIndex].initial || sortedData[ctx[0].dataIndex].name), label: (ctx) => ` ผลงาน: ${ctx.parsed.y}%${sortedData[ctx[0].dataIndex].target ? ` (เป้า: ${sortedData[ctx[0].dataIndex].target})` : ''}` } }, datalabels: { anchor: 'end', align: 'top', formatter: (val) => val + '%', font: { family: 'Prompt', weight: 'bold', size: 10 }, color: '#4b5563', offset: -2 }, annotation: { annotations: annotations } } }, plugins: [ChartDataLabels] }); 
+    }
+    
     function resetCharts() { if(barChart) barChart.destroy(); if(gaugeChart) gaugeChart.destroy(); barChart = null; gaugeChart = null; }
 </script>
 </body>

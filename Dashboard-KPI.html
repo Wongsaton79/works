@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Health Dashboard: Ban Dan Lan Hoi (V.Final)</title>
+    <title>Executive Health Dashboard: Ban Dan Lan Hoi (V.Final-190669)</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -299,7 +299,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-    // ✅ จุดที่ 1: เพิ่มฟังก์ชันตรวจจับทิศทางตัวชี้วัด (นำมาไว้ตรงนี้เพื่อให้ฟังก์ชันอื่นเรียกใช้ได้)
     function isLessIsBetter(goalText) {
         if (!goalText) return false;
         const txt = String(goalText);
@@ -307,7 +306,7 @@
     }
 
     // ** URL API **
-    const API_URL = "https://script.google.com/macros/s/AKfycbzzKg2E_dmaWIjG_n96m_bYaSpMJOQX0AEk67zgMwArN4urRSTlSvi-8THAi_6Pwwly/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzsm4CW1fmQcjn8h2Dif2FFiK3iANqeR_mqYiPX_5IWOwhiSOGeC19BQ6NXmR5iNwBS/exec"; 
 
     let mapData = [], goalsConfig = {}, indicatorsList = {}, allChartData = {};
     let selectedUnitId = 'total', selectedKpiKey = null, currentPeriod = '6m'; 
@@ -347,7 +346,7 @@
 
         subSelect.addEventListener('change', (e) => {
             const val = e.target.value;
-            const match = val.match(/^(\d+(\.\d+)?)/);
+            const match = val.match(/^(\d+(\.\d+)*)/);
             selectedKpiKey = match ? match[1] : null;
             if (selectedKpiKey && goalsConfig[selectedKpiKey]) {
                 const config = goalsConfig[selectedKpiKey];
@@ -382,7 +381,7 @@
 
         let perfArray = [];
         inds.forEach(indName => {
-            const match = indName.match(/^(\d+(\.\d+)?)/);
+            const match = indName.match(/^(\d+(\.\d+)*)/);
             const key = match ? match[1] : null;
             if (key && allChartData[key] && goalsConfig[key]) {
                 const totalData = allChartData[key].find(d => d.id === 'total');
@@ -517,7 +516,8 @@
             const isComparison = (firstItem && firstItem.type === 'year_comparison');
             const isAttributeList = (firstItem && firstItem.type === 'attribute_list'); 
             const isAccidentStats = (firstItem && firstItem.type === 'accident_cluster');
-            const isYearlyTargetResult = (firstItem && firstItem.type === 'yearly_target_result'); 
+            const isYearlyTargetResult = (firstItem && firstItem.type === 'yearly_target_result');
+            const isHerbValue = (firstItem && firstItem.type === 'herb_value'); 
 
             const canvasChart = document.getElementById('comparisonChart');
             const kpiContainer = document.getElementById('special-kpi-container');
@@ -600,6 +600,20 @@
                 renderYearlyTargetResultChart(dataSet);
                 updateYearlyTargetResultTable(dataSet);
                 updateExecutiveStats([], null); 
+            } else if (isHerbValue) {
+                // [V.33] รูปแบบแสดงข้อมูลมูลค่าสมุนไพร (Sheet 30)
+                gaugeCard.style.display = 'none'; chartCard.className = 'col-lg-12'; chartSubtitle.style.display = 'none';
+                
+                let title = goalInfo.custom_title || goalInfo.name; 
+                document.getElementById('chart-title').innerHTML = title; 
+                chartIcon.className = 'bi bi-cash-coin'; 
+                document.getElementById('target-value').textContent = goalText;
+
+                // เรียกใช้ฟังก์ชันวาดกราฟและตารางสำหรับเงินชดเชย
+                renderHerbValueChart(dataSet);
+                updateHerbValueTable(dataSet);
+                updateHerbValueStats(dataSet, goalText);
+
             }
             else {
                 let unitData = dataSet.find(d => d.id === selectedUnitId);
@@ -917,7 +931,6 @@
             let targetNum = (item.target !== undefined && item.target !== null && item.target !== "") ? item.target.toLocaleString() : "-"; let resultNum = (item.result !== undefined && item.result !== null && item.result !== "") ? item.result.toLocaleString() : "-";
             let statusBadge = '<span class="badge bg-light text-muted fw-medium border rounded-pill px-3">N/A</span>'; let progressColor = '#94a3b8'; 
             
-            // ✅ จุดที่ 4: แก้ไขสถานะและสีในตารางสรุปผลงาน
             if (target !== null) { 
                 const goalText = (currentPeriod === '6m') ? goalsConfig[selectedKpiKey]?.goal_6m_text : goalsConfig[selectedKpiKey]?.goal_10m_text;
                 const isPassed = isLessIsBetter(goalText) ? (item.value <= target) : (item.value >= target);
@@ -940,7 +953,6 @@
 
     function animateValue(id, start, end, duration) { if (start === end) { document.getElementById(id).innerHTML = end; return; } const obj = document.getElementById(id); let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); let current = progress * (end - start) + start; obj.innerHTML = (end % 1 === 0) ? Math.floor(current) : current.toFixed(2); if (progress < 1) window.requestAnimationFrame(step); else obj.innerHTML = end; }; window.requestAnimationFrame(step); }
     
-    // ✅ เพิ่มเติม: ทำให้เกจวงกลมฉลาดขึ้น ถ้าน้อยกว่าเป้าสำหรับตัวชี้วัดทิศทางลบ ก็จะขึ้นสีเขียวให้ด้วย
     function renderGauge(value, target) { 
         const ctx = document.getElementById('gaugeChart').getContext('2d'); 
         if (gaugeChart) gaugeChart.destroy(); 
@@ -965,7 +977,6 @@
         const sortedData = [...data].sort((a, b) => { if (a.id === 'total') return -1; if (b.id === 'total') return 1; return b.value - a.value; }); 
         const labels = sortedData.map(d => d.id === 'total' ? 'ภาพรวม' : (d.initial || d.name)); 
         
-        // ✅ จุดที่ 5: แก้ไขแถบสีของแท่งกราฟภาพรวม
         const goalText = (currentPeriod === '6m') ? goalsConfig[selectedKpiKey]?.goal_6m_text : goalsConfig[selectedKpiKey]?.goal_10m_text;
         const bgColors = sortedData.map(d => { 
             if (d.id === 'total') {
@@ -984,6 +995,133 @@
     }
     
     function resetCharts() { if(barChart) barChart.destroy(); if(gaugeChart) gaugeChart.destroy(); barChart = null; gaugeChart = null; }
+
+    // === จุดที่ 3: ฟังก์ชันกราฟ ตาราง และสถิติ สำหรับ ข้อมูลมูลค่าสมุนไพร (Sheet 30) ===
+    function renderHerbValueChart(data) {
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        const overlay = document.getElementById('no-data-overlay');
+        if (barChart) { barChart.destroy(); barChart = null; }
+        
+        // กรองเอาเฉพาะข้อมูลหน่วยบริการ (ตัดภาพรวมทิ้ง) และเรียงจากยอดเงินมากไปน้อย
+        const filteredData = data.filter(d => d.id !== 'total').sort((a,b) => b.moneyValue - a.moneyValue);
+        
+        if (!filteredData || filteredData.length === 0) { overlay.classList.remove('d-none'); return; }
+        overlay.classList.add('d-none');
+
+        barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: filteredData.map(d => d.initial || d.name),
+                datasets: [{
+                    label: 'ยอดเงินชดเชย (บาท)',
+                    data: filteredData.map(d => d.moneyValue),
+                    backgroundColor: '#10b981', // ใช้แท่งสีเขียว สื่อถึงสมุนไพรและการเงิน
+                    borderRadius: 6,
+                    barPercentage: 0.6,
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end',
+                        formatter: (val) => val > 0 ? "฿" + val.toLocaleString() : '', // ใส่สัญลักษณ์ ฿ 
+                        color: '#475569',
+                        font: { weight: 'bold', size: 11 }
+                    }
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: {weight: '600'} } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, title: { display: true, text: 'จำนวนเงิน (บาท)' } }
+                },
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ` ยอดเงินชดเชย: ฿${ctx.raw.toLocaleString()}` } } }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    function updateHerbValueTable(data) {
+        if (dataTable) { dataTable.destroy(); dataTable = null; }
+        const tbody = document.getElementById('table-body');
+        const tfoot = document.getElementById('table-foot');
+        
+        // สร้างหัวตาราง (แสดงทั้งผลงานและเงินชดเชย)
+        document.getElementById('table-header').rows[0].innerHTML = `
+            <th style="width: 10%" class="text-center">ลำดับ</th>
+            <th style="width: 40%">หน่วยบริการ</th>
+            <th style="width: 25%" class="text-center text-primary">ผลงาน (ครั้ง)</th>
+            <th style="width: 25%" class="text-center text-success">เงินชดเชย (บาท)</th>
+        `;
+        tbody.innerHTML = ''; tfoot.innerHTML = '';
+
+        const unitRows = data.filter(d => d.id !== 'total').sort((a,b) => b.moneyValue - a.moneyValue);
+        let sumCount = 0, sumMoney = 0;
+
+        unitRows.forEach((item, index) => {
+            sumCount += item.usageCount;
+            sumMoney += item.moneyValue;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="text-center text-muted fw-bold">${index + 1}</td>
+                <td class="fw-medium">${item.name}</td>
+                <td class="text-center fw-bold bg-light text-primary border-start">${item.usageCount.toLocaleString()}</td>
+                <td class="text-center fw-bold bg-success-subtle text-success border-end">฿${item.moneyValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // แถวสรุปยอดรวมด้านล่าง
+        const trFoot = document.createElement('tr');
+        trFoot.innerHTML = `
+            <td class="text-center border-0">-</td>
+            <td class="border-0 fw-bold">รวมทั้งอำเภอ</td>
+            <td class="text-center fw-bold border-0 bg-light text-primary">${sumCount.toLocaleString()}</td>
+            <td class="text-center fw-bold border-0 bg-success text-white">฿${sumMoney.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        `;
+        tfoot.appendChild(trFoot);
+        
+        dataTable = $('#detail-table').DataTable({ paging: false, searching: false, info: false, ordering: false });
+    }
+
+    function updateHerbValueStats(data, goalText) {
+        if (!data || data.length === 0) return;
+        const unitRows = data.filter(d => d.id !== 'total');
+        let totalCount = unitRows.reduce((sum, d) => sum + d.usageCount, 0);
+        let totalMoney = unitRows.reduce((sum, d) => sum + d.moneyValue, 0);
+
+        // Card 1: แสดงยอดเงินรวม
+        document.getElementById('stat-gap').textContent = "฿" + totalMoney.toLocaleString();
+        document.getElementById('stat-gap').className = "exec-value text-success";
+        document.getElementById('gap-arrow').className = "d-none"; // ซ่อนลูกศร
+        document.getElementById('stat-gap-desc').textContent = "เงินชดเชยรวม (บาท)";
+        document.querySelector('.card-gap .exec-label').textContent = "ยอดเงินชดเชยทั้งหมด";
+        document.querySelector('.card-gap .exec-icon-box').className = "exec-icon-box bg-success-subtle text-success";
+        document.querySelector('.card-gap .exec-icon-box i').className = "bi bi-cash-stack";
+
+        // Card 2: แสดงจำนวนผลงาน (ครั้ง)
+        document.getElementById('stat-pass').textContent = totalCount.toLocaleString();
+        document.getElementById('stat-pass').className = "exec-value text-primary";
+        document.getElementById('stat-pass-sub').innerHTML = "ครั้ง";
+        document.querySelector('.card-pass .exec-label').textContent = "ผลงานการให้บริการ";
+        document.querySelector('.card-pass .exec-icon-box').className = "exec-icon-box bg-primary-subtle text-primary";
+        document.querySelector('.card-pass .exec-icon-box i').className = "bi bi-activity";
+
+        // Card 3: แสดงเกณฑ์เป้าหมาย
+        document.getElementById('stat-max-list').innerHTML = `<div class="d-flex flex-column justify-content-center h-100"><div class="exec-value text-dark" style="font-size: 1.6rem;">${goalText || "-"}</div></div>`;
+        document.querySelector('.card-max .exec-label').textContent = "เป้าหมายที่กำหนด";
+        document.querySelector('.card-max .exec-icon-box').className = "exec-icon-box bg-warning-subtle text-warning";
+        document.querySelector('.card-max .exec-icon-box i').className = "bi bi-bullseye";
+        
+        // Card 4: แสดงหน่วยบริการที่มียอดเงินสูงสุด
+        let maxUnit = [...unitRows].sort((a,b) => b.moneyValue - a.moneyValue)[0];
+        if (maxUnit) {
+            document.getElementById('stat-min').textContent = "฿" + maxUnit.moneyValue.toLocaleString();
+            document.getElementById('stat-min').className = "exec-value text-success fs-3"; 
+            document.getElementById('stat-min-name').innerHTML = `โดย <span class="text-dark">${maxUnit.initial || maxUnit.name}</span>`;
+        }
+        document.querySelector('.card-min .exec-label').textContent = "ยอดเงินชดเชยสูงสุด";
+        document.querySelector('.card-min .exec-icon-box').className = "exec-icon-box bg-success text-white";
+        document.querySelector('.card-min .exec-icon-box i').className = "bi bi-graph-up-arrow";
+    }
 </script>
 </body>
 </html>
